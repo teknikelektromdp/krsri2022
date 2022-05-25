@@ -56,7 +56,8 @@ void loop() {
     MPU_read_Raw_accel(&accel_x, &accel_y, &accel_z, MPU, ACCEL_XOUT_H);
     time_pass = time_now;
   }
-
+  
+  //print variabel pada setiap aksis gyro dan accel
   Serial.print(accel_x);Serial.print("\t");
   Serial.print(accel_y);Serial.print("\t");
   Serial.print(accel_z);Serial.print("\t");
