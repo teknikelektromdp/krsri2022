@@ -1,18 +1,22 @@
 #include <Pixy2.h>
+#include <Servo.h>
 
 // This is the main Pixy object 
 Pixy2 pixy;
+Servo fire;
 
 void setup()
 {
   Serial.begin(115200);
   Serial.print("Starting...\n");
-  
+
+  fire.attach(9);
   pixy.init();
 
   //Close the grip
   pixy.setServos(0, 500);
-  delay(10);
+//  pixy.setLamp(0, 0);
+  padam(200);
 }
 
 void loop()
@@ -59,4 +63,10 @@ void loop()
   }
   //remove delay if possible
   delay(1000);
+}
+
+void padam(int waktu){
+  fire.write(150);
+  delay(waktu);
+  fire.write(10);
 }
