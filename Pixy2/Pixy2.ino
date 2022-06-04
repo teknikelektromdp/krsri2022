@@ -1,6 +1,9 @@
 #include <Pixy2.h>
 #include <Servo.h>
 
+#define ambil  0
+#define letak  1
+
 // This is the main Pixy object 
 Pixy2 pixy;
 Servo fire;
@@ -14,7 +17,7 @@ void setup()
   pixy.init();
 
   //Close the grip
-  pixy.setServos(0, 500);
+  pixy.setServos(0, 0);
 //  pixy.setLamp(0, 0);
   padam(200);
 }
@@ -43,12 +46,7 @@ void loop()
       }
       else if(pixy.ccc.blocks[0].m_x >= 130 && pixy.ccc.blocks[0].m_x <= 180)
       {
-        //Close the grip
-        Serial.println("Gripping...");
-        pixy.setServos(500, 0);
-        delay(1000);
-        pixy.setServos(0, 500);
-        delay(10);  
+         grip(ambil);
       }
       else
       {
@@ -69,4 +67,27 @@ void padam(int waktu){
   fire.write(150);
   delay(waktu);
   fire.write(10);
+}
+
+void grip(int aksi){
+  //ambil
+  if (aksi==0){
+    Serial.println("Gripping...");
+    pixy.setServos(500, 0);//turun buka
+    delay(1000);
+    pixy.setServos(500, 500);//jepit
+    delay(1000);
+    pixy.setServos(0, 500);//angkat jepit
+    delay(1000); 
+  }
+  //letak
+  else if (aksi == 1){
+    Serial.println("Gripping...");
+    pixy.setServos(500, 500);//turun jepit
+    delay(1000);
+    pixy.setServos(500, 0);//turun buka
+    delay(1000);
+    pixy.setServos(0, 0);//angkat buka
+    delay(1000); 
+  }
 }
