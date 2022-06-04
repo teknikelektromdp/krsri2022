@@ -1,20 +1,20 @@
-// ---------------------------------------------------------------------------
-// Example NewPing library sketch that pings 3 sensors 20 times a second.
-// ---------------------------------------------------------------------------
-
 #include <NewPing.h>
 
 #define SONAR_NUM 6      // Number of sensors.
 #define MAX_DISTANCE 60 // Maximum distance (in cm) to ping.
 #define MAX_DISTANCE_FRONT 9 // Maximum distance (in cm) to ping.
 
+//ultrasonic pins
+const byte left = 24, ld = 26, front = 27, rd = 25, right = 23, gripper = 22;
+const byte left_boundary = 8, right_boundary = 8;
+
 NewPing sonar[SONAR_NUM] = {   // Sensor object array.
-  NewPing(2, 2, MAX_DISTANCE), //left
-  NewPing(3, 3, MAX_DISTANCE), // left diagonal 
-  NewPing(4, 4, MAX_DISTANCE_FRONT), // front
-  NewPing(5, 5, MAX_DISTANCE), // right diagonal
-  NewPing(6, 6, MAX_DISTANCE), // right
-  NewPing(7, 7, MAX_DISTANCE) // gripper
+  NewPing(left, left, MAX_DISTANCE), 
+  NewPing(ld, ld, MAX_DISTANCE), 
+  NewPing(front, front, MAX_DISTANCE_FRONT),
+  NewPing(rd, rd, MAX_DISTANCE), 
+  NewPing(right, right, MAX_DISTANCE),
+  NewPing(gripper, gripper, MAX_DISTANCE) 
 };
 
 int paralax(String sensor)
@@ -38,6 +38,10 @@ int paralax(String sensor)
   else if(sensor == "right")
   {
     return sonar[4].ping_cm();
+  }
+  else
+  {
+    return sonar[5].ping_cm();
   }
 }
 bool is_left_intersection()
@@ -66,7 +70,7 @@ bool is_right_intersection()
 }
 bool is_left_undefined()
 {
-  if(paralax("left") <= 8)
+  if(paralax("left") <= left_boundary)
   {
     if(paralax("left") == 0)
     {
@@ -84,7 +88,7 @@ bool is_left_undefined()
 }
 bool is_right_undefined()
 {
-  if(paralax("right") <= 8)
+  if(paralax("right") <= right_boundary)
   {
     if(paralax("right") == 0)
     {
@@ -111,19 +115,8 @@ bool is_front_wall()
     return true;  
   }
 }
-void setup() 
+void wall_following()
 {
-  Serial.begin(115200); // Open serial monitor at 115200 baud to see ping results.
-}
-void loop() 
-{ 
-  delay(50);
-  Serial.print("Front : ");
-  Serial.println(paralax("front"));
-  Serial.print("Left : ");
-  Serial.println(paralax("left"));
-  Serial.print("Right : ");
-  Serial.println(paralax("right"));
   if(is_left_intersection() == true || is_right_intersection() == true)
   {
     if(is_left_intersection() == true)
@@ -145,7 +138,15 @@ void loop()
   else
   {
     Serial.println("Follow the current line"); 
-  }
-  
+  } 
+}
+void setup() 
+{
+  Serial.begin(115200); // Open serial monitor at 115200 baud to see ping results.
+}
+void loop() 
+{ 
+  delay(50);
+  wall_following();
   delay(1000);
 }
