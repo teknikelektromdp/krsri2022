@@ -1,13 +1,6 @@
-#include <QMC5883LCompass.h>
 
-QMC5883LCompass compass;
 
-int min_range_south, max_range_south, min_range_north, max_range_north, min_range_east, max_range_east, min_range_west, max_range_west;
-int calibrationData[3][2];
-bool changed = false;
-bool done = false;
-int t = 0;
-int c = 0;
+
 
 //Get azimuth value
 int readCompass()
@@ -23,21 +16,31 @@ void initAzimuth()
 {
   min_range_south = 253;
   max_range_south = 260;
-  min_range_north = 0;
-  max_range_north = 0;
-  min_range_east = 0;
-  max_range_east = 0;
+  min_range_north = 142;
+  max_range_north = 154;
+  min_range_east = 197;
+  max_range_east = 207;
   min_range_west = 0;
   min_range_west = 0;
 }
 void adjustRobotPosition()
 {
-  int readResult=readCompas();
+  int readResult=readCompass();
+  String arahPutar;
+  lcd.print(readResult);
+
+  if(readResult> max_range_south || readResult<148) arahPutar="kiri";
+  else if(readResult< min_range_south && readResult>=148)arahPutar="kanan";
+  else arahPutar="kanan";
+
+ 
   while(!(readResult >= min_range_south && readResult <= max_range_south))
   {
+    Putar(arahPutar, 30);
     compass.read();
-    Serial.println(readResult);
-    readResult=readCompas();  
+    readResult=readCompass();
+    lcd.setCursor(0,1);
+    lcd.print(readResult);
   }
   delay(1000);
 }
@@ -107,15 +110,15 @@ void calibration()
     Serial.println(");");
   }  
 }
-void setup() {
-  Serial.begin(9600);
-  compass.init();
-  compassCalibration(); 
-  compass.read();
-  initAzimuth();
-  adjustRobotPosition();
-}
-void loop() {
-  Serial.println("Main Program");
-  delay(1000);
-}
+//void setup() {
+//  Serial.begin(9600);
+//  compass.init();
+//  compassCalibration(); 
+//  compass.read();
+//  initAzimuth();
+//  adjustRobotPosition();
+//}
+//void loop() {
+//  Serial.println("Main Program");
+//  delay(1000);
+//}

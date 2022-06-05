@@ -48,6 +48,9 @@ int posisiLFT=0, posisiLFM=0, posisiLFB=0,
     posisiRFT=0, posisiRFM=0, posisiRFB=0,
     posisiRBT=0, posisiRBM=0, posisiRBB=0;
 
+//waktu delay perpindahan servo untuk 1 derajat
+int delayWaktu=4;
+
 
 void setup() {
   servoLFT.attach(2);  servoLFM.attach(3);  servoLFB.attach(4);  
@@ -63,26 +66,25 @@ void setup() {
 
   lfbTegak=lfbIn + 51; lbbTegak=lbbIn + 51;
   rfbTegak=rfbIn - 51; rbbTegak=rbbIn - 51;
-
 }
 
 void loop() {
   delay(2000);
 
-  
-  MajuAwal();
-  MajuKananDepan();
-  MajuKananDorong();
-
-  int kondisi=0;
-  while (kondisi<=5){
-    kondisi++;
-    MajuKiri();
-    MajuKiriDorong();
-    MajuKanan();
-    MajuKananDorong();
-  }
   berdiri();
+  
+//  MajuAwal();
+//  MajuKananDepan();
+//  MajuKananDorong();
+//
+//  int kondisi=0;
+//  while (kondisi==0){
+//    MajuKiri();
+//    MajuKiriDorong();
+//    MajuKanan();
+//    MajuKananDorong();
+//  }
+//  berdiri();
 
   delay(10000000);
 
@@ -256,7 +258,7 @@ void ServoMovementSingle(String servoNama, int sudutBaru) {
 
   for (int i=1; i<=jarak; i++) {
     ServoWrite(servoNama, sudutLama + (pengali * i));
-    delay(5);
+    delay(delayWaktu);
   }
 }
 
@@ -266,7 +268,7 @@ void ServoMovementDouble(
 ) {
   int sudutLama1, pengali1, jarak1,
       sudutLama2, pengali2, jarak2,
-      sudutTemp1, sudutTemp2, maksimum;
+      sudutTemp1, sudutTemp2, minimum, maksimum;
       
   sudutLama1=PosisiServo(servoNama1);
   sudutLama2=PosisiServo(servoNama2);
@@ -277,13 +279,18 @@ void ServoMovementDouble(
   jarak2=HitungJarak(sudutLama2, sudutBaru2);
   pengali2=HitungPengali(sudutLama2, sudutBaru2);
 
-  if (jarak1 > jarak2) maksimum=jarak1;
-  else if (jarak2 > jarak1) maksimum=jarak2;
-  else maksimum=jarak1;
+  //menghitung nilai terkecil dari jarak1 dan jarak2
+  minimum=jarak1;
+  if (jarak2 < minimum) minimum=jarak2;
+
+  //menghitung nilai terbesar dari jarak1 dan jarak2
+  maksimum=jarak1;
+  if (jarak2 > maksimum) maksimum=jarak2;
   
-  for (int i=1; i<=maksimum; i++) {
-    sudutTemp1 = sudutLama1 + (pengali1 * i);
-    sudutTemp2 = sudutLama2 + (pengali2 * i);
+  //melakukan pergerakan servo secara bersamaan dari sudutLama ke sudutBaru
+  for (int i=1; i<=minimum; i++) {
+    sudutTemp1 = sudutLama1 + (pengali1 * i * (jarak1/minimum));
+    sudutTemp2 = sudutLama2 + (pengali2 * i * (jarak2/minimum));
 
     if ((pengali1==1 && sudutTemp1<=sudutBaru1) || (pengali1==-1 && sudutTemp1>=sudutBaru1)) {
       ServoWrite(servoNama1, sudutTemp1);    
@@ -291,7 +298,8 @@ void ServoMovementDouble(
     if ((pengali2==1 && sudutTemp2<=sudutBaru2) || (pengali2==-1 && sudutTemp2>=sudutBaru2)) {
       ServoWrite(servoNama2, sudutTemp2);
     }
-    delay(5);
+    
+    delay((maksimum/minimum)*delayWaktu);
   }
 }
 
@@ -303,7 +311,7 @@ void ServoMovementTriple(
   int sudutLama1, pengali1, jarak1,
       sudutLama2, pengali2, jarak2,
       sudutLama3, pengali3, jarak3,
-      sudutTemp1, sudutTemp2, sudutTemp3, maksimum;
+      sudutTemp1, sudutTemp2, sudutTemp3, minimum, maksimum;
       
   sudutLama1=PosisiServo(servoNama1);
   sudutLama2=PosisiServo(servoNama2);
@@ -318,37 +326,21 @@ void ServoMovementTriple(
   jarak3=HitungJarak(sudutLama3, sudutBaru3);
   pengali3=HitungPengali(sudutLama3, sudutBaru3);
 
+  //menghitung nilai terkecil dari jarak1, jarak2, dan jarak3
+  minimum=jarak1;
+  if (jarak2 < minimum) minimum=jarak2;
+  else if (jarak3 < minimum) minimum=jarak3;
 
+  //menghitung nilai terbesar dari jarak1, jarak2, dan jarak3
+  maksimum=jarak1;
+  if (jarak2 > maksimum) maksimum=jarak2;
+  else if (jarak3 > maksimum) maksimum=jarak3;
   
-  if (sudutLama1 < sudutBaru1) {
-    jarak1=sudutBaru1-sudutLama1;
-    pengali1=1;
-  } else if (sudutLama1 > sudutBaru1) {
-    jarak1=sudutLama1-sudutBaru1;
-    pengali1=-1;
-  } else {//untuk sudutLama sama dengan sudutBaru
-    jarak1=0;
-    pengali1=1;
-  }
-
-  if (sudutLama2 < sudutBaru2) {
-    jarak2=sudutBaru2-sudutLama2;
-    pengali2=1;
-  } else if (sudutLama2 > sudutBaru2) {
-    jarak2=sudutLama2-sudutBaru2;
-    pengali2=-1;
-  } else {//untuk sudutLama sama dengan sudutBaru
-    jarak2=0;
-    pengali2=1;
-  }
-
-  if (jarak1 > jarak2) maksimum=jarak1;
-  else if (jarak2 > jarak1) maksimum=jarak2;
-  else maksimum=jarak1;
-  
-  for (int i=1; i<=maksimum; i++) {
-    sudutTemp1 = sudutLama1 + (pengali1 * i);
-    sudutTemp2 = sudutLama2 + (pengali2 * i);
+  //melakukan pergerakan servo secara bersamaan dari sudutLama ke sudutBaru
+  for (int i=1; i<=minimum; i++) {
+    sudutTemp1 = sudutLama1 + (pengali1 * i * (jarak1/minimum));
+    sudutTemp2 = sudutLama2 + (pengali2 * i * (jarak2/minimum));
+    sudutTemp3 = sudutLama3 + (pengali3 * i * (jarak3/minimum));
 
     if ((pengali1==1 && sudutTemp1<=sudutBaru1) || (pengali1==-1 && sudutTemp1>=sudutBaru1)) {
       ServoWrite(servoNama1, sudutTemp1);    
@@ -356,7 +348,11 @@ void ServoMovementTriple(
     if ((pengali2==1 && sudutTemp2<=sudutBaru2) || (pengali2==-1 && sudutTemp2>=sudutBaru2)) {
       ServoWrite(servoNama2, sudutTemp2);
     }
-    delay(10);
+    if ((pengali3==1 && sudutTemp3<=sudutBaru3) || (pengali3==-1 && sudutTemp3>=sudutBaru3)) {
+      ServoWrite(servoNama3, sudutTemp3);
+    }
+    
+    delay((maksimum/minimum)*delayWaktu);
   }
 }
 /**
@@ -460,6 +456,7 @@ void MajuKiriDorong() {
   delay(10);
 
   //kembalikan sudut kaki kiri
+  ServoMovementDouble("LFB", 0, "LBB", 0);
   ServoMovementDouble("LFM", 0, "LBM", 0);
   delay(10);
 }
