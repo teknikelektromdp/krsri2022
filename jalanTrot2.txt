@@ -1,0 +1,74 @@
+
+void MajuAwal(int kecepatan){
+  //servo tengah (kaki kiri depan dan kanan belakang) mengangkat
+  for (int i=0; i<=50; i++) {
+    servoLFM.write(SudutReal("LFM",i));
+    servoRBM.write(SudutReal("RBM",i));
+    delay(kecepatan);
+  }
+  delay(50);
+
+  //servo atas (kaki kiri depan dan kanan belakang) maju
+  for (int i=0; i<=30; i++) {
+    servoLFT.write(SudutReal("LFT",i));
+    servoRBT.write(SudutReal("RBT",i));
+    delay(kecepatan);
+  }  
+
+}
+
+void MajuProses(int kecepatan){
+  //servo tengah (kaki kiri depan dan kanan belakang) menumpu
+  for (int i=50; i>=0; i--){
+    servoLFM.write(SudutReal("LFM",i));
+    servoRBM.write(SudutReal("RBM",i));
+    delay(kecepatan);
+  }
+  delay (60);
+  
+  //servo tengah (kaki kanan depan dan kiri belakang) mengangkat
+  for (int i=0; i<=50; i++) {
+    servoRFM.write(SudutReal("RFM",i));
+    servoLBM.write(SudutReal("LBM",i));
+    delay(kecepatan);  
+  }
+  delay(50);
+
+  for (int i=30; i>=0; i--){
+    //servo atas (kaki kiri depan dan kanan belakang) mendorong
+    servoLFT.write(SudutReal("LFT",i));
+    servoRBT.write(SudutReal("RBT",i));
+
+    //servo atas (kaki kanan depan dan kiri belakang) maju
+    servoRFT.write(SudutReal("RFT",30-i));
+    servoLBT.write(SudutReal("LBT",30-i));
+    delay(kecepatan);
+  }
+  
+  //servo tengah (kaki kanan depan dan kiri belakang) menumpu
+  for (int i=50; i>=0; i--){
+    servoRFM.write(SudutReal("RFM",i));
+    servoLBM.write(SudutReal("LBM",i));
+    delay(kecepatan);
+  }
+  delay (60);
+
+  //servo tengah (kaki kiri depan dan kanan belakang) mengangkat
+  for (int i=0; i<=50; i++) {
+    servoLFM.write(SudutReal("LFM",i));
+    servoRBM.write(SudutReal("RBM",i));
+    delay(kecepatan);
+  }
+  delay(50);
+  
+  for (int i=0; i<=30; i++) {
+    //servo atas (kaki kanan depan dan kiri belakang) mendorong
+    servoRFT.write(SudutReal("RFT",30-i));
+    servoLBT.write(SudutReal("LBT",30-i));
+
+    //servo atas (kaki kiri depan dan kanan belakang) maju
+    servoLFT.write(SudutReal("LFT",i));
+    servoRBT.write(SudutReal("RBT",i));    
+    delay(kecepatan);
+  }  
+}

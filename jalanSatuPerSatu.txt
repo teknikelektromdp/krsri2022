@@ -1,0 +1,107 @@
+  int kondisi=0;
+  while (kondisi==0){
+    MajuAwal1(5);
+    MajuAwal2(5);
+//    MajuMendorong(20);
+//    MajuProses(12);
+//    LftMovement("maju",0,30);
+  }
+
+
+
+void MajuAwal1(int kecepatan){
+  //---kaki kanan belakang
+  //servo tengah kaki kanan belakang mengangkat
+  servoRBM.write(SudutReal("RBM",50));
+  delay(60);
+
+  //servo atas kaki kanan belakang maju
+  for (int i=0; i<=30; i++) {
+    servoRBT.write(SudutReal("RBT",i));
+    delay(kecepatan);
+  }
+  delay(10);
+
+  //servo tengah kaki kanan belakang menumpu
+  servoRBM.write(SudutReal("RBM",-10));
+  delay(60);
+
+  //servo atas kaki kanan belakang mendorong
+  for (int i=30; i>=1; i--) {
+    servoRBT.write(SudutReal("RBT",i));
+    delay(kecepatan);
+  }
+  delay(20);
+
+  //---kaki kiri depan
+  //servo tengah kaki kiri depan mengangkat
+  servoLFM.write(SudutReal("LFM",50));
+  delay(60);
+  
+  //servo atas kaki kiri depan maju
+  for (int i=0; i<=30; i++) {
+    servoLFT.write(SudutReal("LFT",i));
+    delay(kecepatan);
+  }
+  delay(10);
+  
+  //servo tengah kaki kiri depan menumpu
+  servoLFM.write(SudutReal("LFM",-10));
+  delay(60);
+
+  //servo atas kaki kiri depan mendorong
+  for (int i=30; i>=1; i--) {
+    servoLFT.write(SudutReal("LFT",i));
+    delay(kecepatan);
+  }
+  delay(20);
+
+}
+
+void MajuAwal2(int kecepatan){
+  //---kaki kiri belakang
+  //servo tengah kaki kiri belakang mengangkat
+  servoLBM.write(SudutReal("LBM",50));
+  delay(60);
+
+  //servo atas kaki kiri belakang maju
+  for (int i=0; i<=30; i++) {
+    servoLBT.write(SudutReal("LBT",i));
+    delay(kecepatan);
+  }
+  delay(10);
+
+  //servo tengah kaki kiri belakang menumpu
+  servoLBM.write(SudutReal("LBM",-10));
+  delay(60);
+
+  //servo atas kaki kiri belakang mendorong
+  for (int i=30; i>=1; i--) {
+    servoLBT.write(SudutReal("LBT",i));
+    delay(kecepatan);
+  }
+  delay(20);
+
+  //---kaki kanan depan
+  //servo tengah kaki kanan depan mengangkat
+  servoRFM.write(SudutReal("RFM",50));
+  delay(60);
+  
+  //servo atas kaki kanan depan maju
+  for (int i=0; i<=30; i++) {
+    servoRFT.write(SudutReal("RFT",i));
+    delay(kecepatan);
+  }
+  delay(10);
+  
+  //servo tengah kaki kanan depan menumpu
+  servoRFM.write(SudutReal("RFM",-10));
+  delay(60);
+
+  //servo atas kaki kanan depan mendorong
+  for (int i=30; i>=1; i--) {
+    servoRFT.write(SudutReal("RFT",i));
+    delay(kecepatan);
+  }
+  delay(20);
+}
