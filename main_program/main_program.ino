@@ -88,7 +88,7 @@ MPU6050 mpu(Wire);
 
 
 void setup() {
-  Serial.begin(115200); //170ms a 19k2, 28ms a 115k2
+  Serial.begin(9600); //170ms a 19k2, 28ms a 115k2
   
   servoLFT.attach(44);  servoLFM.attach(46);  servoLFB.attach(6);
   servoLBT.attach(9);   servoLBM.attach(4);   servoLBB.attach(2);
@@ -119,19 +119,21 @@ void setup() {
   fire.attach(45);
   pixy.init();
 
+  compass.init();
+
   //Close the grip
-  pixy.setServos(500, 500);//berurut ke arah luar  (angkat, jepit), (angkat=0, turun=500), (jepit=0, buka=500)
+  pixy.setServos(500, 25);//berurut ke arah luar  (angkat, jepit), (angkat=0, turun=500), (jepit=25, buka=500)
 //  pixy.setLamp(1, 0);
 //  padam(200);
 
   
-////IMU
-//  Wire.begin();
-//  mpu.begin();
-//  //Start calculating the offset
-//  delay(1000);
-//  lcd.clear();
-//  mpu.calcOffsets(true,true);
+//IMU
+  Wire.begin();
+  mpu.begin();
+  //Start calculating the offset
+  delay(1000);
+  lcd.clear();
+  mpu.calcOffsets(true,true);
 
 }
 
@@ -141,25 +143,24 @@ void setup() {
 
 void loop() {
   lcd.clear();
-
+  
 
 //  for(int i=0; i<10; i++){
 //    Padam(500);
 //    delay(1000);
 //  }
-
-  //Algorima rute
+/////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////Algorima rute/////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
   Berdiri();
-  delay(2000);
-
-
-
+  delay(200);
+  
   /**
    * robot menentukan hadap keluar home
    */
   RintanganHome();
 
-
+  
   /**
    * Keadaan robot maju menelusuri jalan sebelum rintangan puing pertama
    * sampai robot menghadap puing
@@ -191,70 +192,73 @@ void loop() {
   /**
    * Penyelamatan dan pemadaman
    */
-
-
-    Berdiri();
-    int apiAda=0, apiSuhu=45;
-    double termalBaca=TermalMaxTemp();
-
-    if (termalBaca>=apiSuhu){
-      apiAda=1;
-      lcd.setCursor(0,0);
-      lcd.print(termalBaca); lcd.print(" api");
-    }
-    else {
-      while(apiAda==0){
-
-        int i=0;
-        while(apiAda==0 && i<=30) {
-          i++;
-          ServoWrite("LFT", i);
-          ServoWrite("RFT", -i);
-          ServoWrite("LBT", i);
-          ServoWrite("RBT", -i);
-          termalBaca=TermalMaxTemp();
-          delay(50);
-          if (termalBaca>=apiSuhu) apiAda=1;
-          lcd.clear();
-          lcd.setCursor(0,0); lcd.print(termalBaca);
-          lcd.setCursor(0,1); lcd.print(i);
-        }
-
-        //memutar badan robot jika api masih belum ketemu pada saat pencarian sebelumnya
-        if (apiAda==0){
-          //majukan kaki kiri belakang bersamaan dengan menaikkannya
-          ServoMovementDouble("LFT", 15, "LFM", 40);
-          //majukan kaki kiri belakang bersamaan dengan menurunkannya
-          ServoMovementDouble("LFT", 0, "LFM", 0);
-          delay(50);
-          
-          //majukan kaki kiri belakang bersamaan dengan menaikkannya
-          ServoMovementDouble("LBT", 15, "LBM", 40);
-          //majukan kaki kiri belakang bersamaan dengan menurunkannya
-          ServoMovementDouble("LBT", 0, "LBM", 0);
-          delay(50);
+      Berdiri();
+      int apiAda=0, apiSuhu=45;
+      double termalBaca=TermalMaxTemp();
   
-          //majukan kaki kiri belakang bersamaan dengan menaikkannya
-          ServoMovementDouble("RBT", -15, "RBM", 40);
-          //majukan kaki kiri belakang bersamaan dengan menurunkannya
-          ServoMovementDouble("RBT", 0, "RBM", 0);
-          delay(50);
+      if (termalBaca>=apiSuhu){
+        apiAda=1;
+        lcd.setCursor(0,0);
+        lcd.print(termalBaca); lcd.print(" api");
+      }
+      else {
+        while(apiAda==0){
   
-          //majukan kaki kiri belakang bersamaan dengan menaikkannya
-          ServoMovementDouble("RFT", -15, "RFM", 40);
-          //majukan kaki kiri belakang bersamaan dengan menurunkannya
-          ServoMovementDouble("RFT", 0, "RFM", 0);
-          delay(50);
-          lcd.clear();
-          lcd.setCursor(0,0); lcd.print(termalBaca);   
+          int i=0;
+          while(apiAda==0 && i<=30) {
+            i++;
+            ServoWrite("LFT", i);
+            ServoWrite("RFT", -i);
+            ServoWrite("LBT", i);
+            ServoWrite("RBT", -i);
+            termalBaca=TermalMaxTemp();
+            delay(50);
+            if (termalBaca>=apiSuhu) apiAda=1;
+            lcd.clear();
+            lcd.setCursor(0,0); lcd.print(termalBaca);lcd.print(i);
+
+            lcd.setCursor(0,1); lcd.print("padam");
+          }
+  
+          //memutar badan robot jika api masih belum ketemu pada saat pencarian sebelumnya
+          if (apiAda==0){
+            //majukan kaki kiri belakang bersamaan dengan menaikkannya
+            ServoMovementDouble("LFT", 15, "LFM", 40);
+            //majukan kaki kiri belakang bersamaan dengan menurunkannya
+            ServoMovementDouble("LFT", 0, "LFM", 0);
+            delay(50);
+            
+            //majukan kaki kiri belakang bersamaan dengan menaikkannya
+            ServoMovementDouble("LBT", 15, "LBM", 40);
+            //majukan kaki kiri belakang bersamaan dengan menurunkannya
+            ServoMovementDouble("LBT", 0, "LBM", 0);
+            delay(50);
+    
+            //majukan kaki kiri belakang bersamaan dengan menaikkannya
+            ServoMovementDouble("RBT", -15, "RBM", 40);
+            //majukan kaki kiri belakang bersamaan dengan menurunkannya
+            ServoMovementDouble("RBT", 0, "RBM", 0);
+            delay(50);
+    
+            //majukan kaki kiri belakang bersamaan dengan menaikkannya
+            ServoMovementDouble("RFT", -15, "RFM", 40);
+            //majukan kaki kiri belakang bersamaan dengan menurunkannya
+            ServoMovementDouble("RFT", 0, "RFM", 0);
+            delay(50);
+            lcd.clear();
+            lcd.setCursor(0,0); lcd.print(termalBaca);
+            lcd.setCursor(0,1); lcd.print("padam");
+          }
         }
       }
-    }
-
-    Padam(500);
+  
+//      Padam(200);
+    lcd.clear();
+    lcd.print("Done");
 
     
-  //robot kembali ke safe zone
+  /**
+   * robot kembali ke safe zone
     Berdiri();
     MajuAwal();
     while(Paralax("front")>30){
@@ -269,6 +273,15 @@ void loop() {
     InitAzimuth();
     AdjustRobotPositionSelatan();
     Grip(1);
+
+*/
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////Algorima stop/////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+delay(10000000000000000000000);
 
 
 
@@ -301,92 +314,6 @@ void loop() {
 
 
 
-//    int par_g, par_f;
-//
-//    par_g=Paralax("gripper");
-//    par_f=Paralax("front");
-//
-//    Berdiri();
-//    lcd.setCursor(5, 0); lcd.print("g ");lcd.print(par_g);
-//    lcd.setCursor(5, 1); lcd.print("F ");lcd.print(par_f);
-//    delay(100);
-//    lcd.clear();
-//    
-//    MundurAwal();
-////    while((Paralax("gripper")>30 || Paralax("gripper")==0) && (Paralax("front")<80 && Paralax("front")>0)){
-////    while((Paralax("gripper")>25) || Paralax("gripper")==0){
-//    while((par_f<120) && par_f>0){
-//      MundurKiri(50);
-//      MundurKiriDorong();
-//      MundurKanan(50);
-//      MundurKananDorong();
-//      lcd.clear();
-//      lcd.setCursor(7, 0); lcd.print("g ");lcd.print(par_g);
-//      lcd.setCursor(7, 1); lcd.print("F ");lcd.print(par_f);
-//      lcd.setCursor(0,0); lcd.print("mundur");
-//      par_g=Paralax("gripper");
-//      par_f=Paralax("front");
-//    }
-//
-//
-//    
-//    Berdiri();
-//    int apiAda=0, apiSuhu=45;
-//    double termalBaca=TermalMaxTemp();
-//
-//    if (termalBaca>=apiSuhu){
-//      apiAda=1;
-//      lcd.setCursor(0,0);
-//      lcd.print(termalBaca); lcd.print(" api");
-//    }
-//    else {
-//      while(apiAda==0){
-//
-//        int i=0;
-//        while(apiAda==0 && i<=30) {
-//          i++;
-//          ServoWrite("LFT", i);
-//          ServoWrite("RFT", -i);
-//          ServoWrite("LBT", i);
-//          ServoWrite("RBT", -i);
-//          termalBaca=TermalMaxTemp();
-//          delay(50);
-//          if (termalBaca>=apiSuhu) apiAda=1;
-//          lcd.clear();
-//          lcd.setCursor(0,0); lcd.print(termalBaca);
-//          lcd.setCursor(0,1); lcd.print(i);
-//        }
-//
-//        //memutar badan robot jika api masih belum ketemu pada saat pencarian sebelumnya
-//        if (apiAda==0){
-//          //majukan kaki kiri belakang bersamaan dengan menaikkannya
-//          ServoMovementDouble("LFT", 15, "LFM", 50);
-//          //majukan kaki kiri belakang bersamaan dengan menurunkannya
-//          ServoMovementDouble("LFT", 0, "LFM", 0);
-//          delay(50);
-//          
-//          //majukan kaki kiri belakang bersamaan dengan menaikkannya
-//          ServoMovementDouble("LBT", 15, "LBM", 50);
-//          //majukan kaki kiri belakang bersamaan dengan menurunkannya
-//          ServoMovementDouble("LBT", 0, "LBM", 0);
-//          delay(50);
-//  
-//          //majukan kaki kiri belakang bersamaan dengan menaikkannya
-//          ServoMovementDouble("RBT", -15, "RBM", 50);
-//          //majukan kaki kiri belakang bersamaan dengan menurunkannya
-//          ServoMovementDouble("RBT", 0, "RBM", 0);
-//          delay(50);
-//  
-//          //majukan kaki kiri belakang bersamaan dengan menaikkannya
-//          ServoMovementDouble("RFT", -15, "RFM", 50);
-//          //majukan kaki kiri belakang bersamaan dengan menurunkannya
-//          ServoMovementDouble("RFT", 0, "RFM", 0);
-//          delay(50);
-//          lcd.clear();
-//          lcd.setCursor(0,0); lcd.print(termalBaca);   
-//        }
-//      }
-//    }
 //
 //    Padam(500);
 
@@ -408,8 +335,6 @@ void loop() {
 
 
 
-
-    delay(10000000000);
     
 //    while(termalBaca<40){
 //      lcd.setCursor(0,0); lcd.print(termalBaca);
@@ -425,33 +350,6 @@ void loop() {
 //        lcd.setCursor(0,1); lcd.print(a);
 //      }
       
-//      if(a==30){
-//        //majukan kaki kiri belakang bersamaan dengan menaikkannya
-//        ServoMovementDouble("LFT", (a/2), "LFM", 30);
-//        //majukan kaki kiri belakang bersamaan dengan menurunkannya
-//        ServoMovementDouble("LFT", 0, "LFM", 0);
-//        delay(100);
-//        
-//        //majukan kaki kiri belakang bersamaan dengan menaikkannya
-//        ServoMovementDouble("LBT", (a/2), "LBM", 30);
-//        //majukan kaki kiri belakang bersamaan dengan menurunkannya
-//        ServoMovementDouble("LBT", 0, "LBM", 0);
-//        delay(100);
-//
-//        //majukan kaki kiri belakang bersamaan dengan menaikkannya
-//        ServoMovementDouble("RBT", -(a/2), "RBM", 30);
-//        //majukan kaki kiri belakang bersamaan dengan menurunkannya
-//        ServoMovementDouble("RBT", 0, "RBM", 0);
-//        delay(100);
-//
-//        //majukan kaki kiri belakang bersamaan dengan menaikkannya
-//        ServoMovementDouble("RFT", -(a/2), "RFM", 30);
-//        //majukan kaki kiri belakang bersamaan dengan menurunkannya
-//        ServoMovementDouble("RFT", 0, "RFM", 0);
-//        delay(100);
-//        lcd.clear();
-//        lcd.setCursor(0,0); lcd.print(termal.getMaxTemp());
-//      }
 
     
 //    if(termal.getMaxTemp()>=45){
@@ -483,39 +381,5 @@ void loop() {
 
 
 //    delay(100000000);
-
-//  while(LeftIntersect() == false){
-//    MajuKanan(30);
-//    MajuKananDorong();
-//    MajuKiri(30);
-//    MajuKiriDorong();
-//
-//    //robot berbelok ke kanan saat terlalu miring ke kiri
-//    if(Paralax("leftDiagonal")<=15){
-//      for(int ka=0; ka<=2; ka++){
-//        Putar("kanan");
-//      }
-//    }
-//    else if(Paralax("rightDiagonal"<=15)){
-//      for(int ki=0; ki<=2; ki++){
-//        Putar("kiri");
-//      }
-//    }
-//    if(FrontWall()==true && 
-//    ))
-//  }
-//
-//  //belok saat ada persimpangan ke kiri
-//  if(LeftIntersect()==true){
-//    Putar90("kiri")
-//      
-//    MajuAwal(); 
-//    for(int a=0; a<=10;a++){
-//      MajuKanan(30);
-//      MajuKananDorong();
-//      MajuKiri(30);
-//      MajuKiriDorong();
-//  }
-//  }
 
 }

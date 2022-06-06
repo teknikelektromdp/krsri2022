@@ -21,24 +21,24 @@ void RintanganPuing1(){
     
     if((par_ld<=13 && par_ld>0) || (par_l<=10 && par_l>0)){
       if (kondisiMaju==1) Berdiri();
-//      lcd.setCursor(10,0); lcd.print("kanan");
+      lcd.setCursor(0,1); lcd.print("puing1");
       Putar("kanan", 32, 50); //berputar sejauh 32 derajat 
       kondisiMaju=0;
       
     } else if((par_rd<=13 && par_rd>0) || (par_r<=10 && par_r>0)){
       if (kondisiMaju==1) Berdiri();
-//      lcd.setCursor(10,1); lcd.print("kiri");
+      lcd.setCursor(0,1); lcd.print("puing1");
       Putar("kiri", 32,50); //berputar sejauh 32 derajat 
       kondisiMaju=0;
       
-    } else if((par_l==0 || par_l>40) && (par_f<=20 && par_f>0)){//robot menemukan simpangan kiri
+    } else if((par_l==0 || par_l>30) && (par_f<=25 && par_f>0)){//robot menemukan simpangan kiri
       dinding2=1;//lanjut ke rintangan berikutnya 
       
     } else{
       if (kondisiMaju==0) MajuAwal();
 
 //      lcd.setCursor(10,0); lcd.print("maju");
-//      lcd.setCursor(10,1); lcd.print("maju");
+      lcd.setCursor(0,1); lcd.print("puing1");
       MajuKanan(50);
       MajuKananDorong();
       MajuKiri(50);
@@ -65,7 +65,7 @@ void RintanganPuing1(){
     Putar("kiri", 32, 30);//berputar sejauh 32 derajat 
     compass.read();
     readResult=readCompass();
-    lcd.setCursor(0,1);lcd.print(readResult); lcd.print("kiri1");
+    lcd.setCursor(0,1);lcd.print(readResult); lcd.print("kiri2");
   }
   lcd.setCursor(3,1);lcd.print("maju");
 }

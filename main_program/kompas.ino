@@ -6,39 +6,52 @@ int readCompass()
 //Calibrated value
 void CompassCalibration()
 {
-  compass.setCalibration(-891, 1147, -1741, 433, -177, 250);  
+  compass.setCalibration(0, 3072, -938, 743, -268, 133);  
 }
 void InitAzimuth()
 {
-  min_range_south = 253;
-  max_range_south = 260;
-  min_range_north = 142;
-  max_range_north = 154;
-  min_range_east = 197;
-  max_range_east = 207;
-  min_range_west = 0;
-  min_range_west = 0;
+  min_range_south = 300;
+  max_range_south = 310;
+  min_range_north = 70;
+  max_range_north = 80;
+  min_range_east = 245;
+  max_range_east = 255;
+  min_range_west = 10;
+  min_range_west = 19;
 }
 
 //fungsi untuk memutar robot ke selatan
 void AdjustRobotPositionSelatan()
 {
   int readResult=readCompass();
-  String arahPutar;
+//  String arahPutar;
   lcd.print(readResult);
+  Serial.print(readResult);
 
-  if(readResult> max_range_south || readResult<148) arahPutar="kiri";
-  else if(readResult< min_range_south && readResult>=148)arahPutar="kanan";
-  else arahPutar="kiri";
+//  if(readResult> max_range_south || readResult<148) arahPutar="kiri";
+//  else if(readResult< min_range_south && readResult>=148)arahPutar="kanan";
+//  else arahPutar="kiri";
 
  
   while(!(readResult >= min_range_south && readResult <= max_range_south))
   {
-    Putar(arahPutar, 32, 30);
+    if(readResult> max_range_south || readResult<((min_range_north + max_range_north)/2)){
+      Putar("kiri", 32, 30);
+    }
+    else if(readResult< min_range_south && readResult>=148){
+      Putar("kanan", 32, 30);
+    }
+    else{
+      Putar("kiri", 32, 30);
+      }
+    
     compass.read();
     readResult=readCompass();
-    lcd.setCursor(0,1);
+    lcd.clear();
+    lcd.setCursor(0,0);lcd.print("home");
+    lcd.setCursor(5,1);
     lcd.print(readResult);
+//    Serial.println(readResult);
   }
 //  delay(1000);
 }

@@ -1,5 +1,5 @@
 void RintanganHome() {
-  compass.init();
+//  compass.init();
   CompassCalibration(); 
   compass.read();
   InitAzimuth();

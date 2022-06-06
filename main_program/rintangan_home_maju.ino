@@ -22,24 +22,24 @@ void RintanganHomeMaju() {
     
     if((par_ld<=13 && par_ld>0) || (par_l<=10 && par_l>0)){//robot terlalu ke kiri sehingga perlu memutar ke kanan
       if (kondisiMaju==1) Berdiri();
-//      lcd.setCursor(10,0); lcd.print("kanan");
+      lcd.setCursor(0,1); lcd.print("home maju");
       Putar("kanan", 32, 30);//berputar sejauh 32 derajat 
       kondisiMaju=0;
       
     } else if((par_rd<=13 && par_rd>0) || (par_r<=10 && par_r>0)){//robot terlalu ke kanan sehingga perlu memutar ke kiri
       if (kondisiMaju==1) Berdiri();
-//      lcd.setCursor(10,1); lcd.print("kiri");
+      lcd.setCursor(0,1); lcd.print("home maju");
       Putar("kiri", 32, 30); //berputar sejauh 32 derajat 
       kondisiMaju=0;
       
-    } else if((par_l==0 || par_l>40) && (par_f<=20 && par_f>0)){//robot menemukan simpangan kiri
+    } else if((par_l==0 || par_l>40) && (par_f<=25 && par_f>0)){//robot menemukan simpangan kiri
       dinding1=1;//lanjut ke rintangan berikutnya
 
     } else{//robot lurus sehingga meneruskan untuk maju
       if (kondisiMaju==0) MajuAwal();
 
 //      lcd.setCursor(10,0); lcd.print("maju");
-//      lcd.setCursor(10,1); lcd.print("maju");
+      lcd.setCursor(0,1); lcd.print("home maju");
       MajuKanan(30);
       MajuKananDorong();
       MajuKiri(30);
@@ -48,11 +48,14 @@ void RintanganHomeMaju() {
       kondisiMaju=1;
     }
   }
+
+
+  //memulai kompas pada belokan kiri pertama
   compass.init();
   CompassCalibration(); 
   compass.read();
   InitAzimuth();
-  // posisi menghadap puing 1
+  // memutar posisi hingga menghadap puing 1
   Berdiri();
   int readResult=readCompass();
   lcd.setCursor(0,1);

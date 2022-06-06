@@ -23,13 +23,13 @@ void RintanganPuing2(){
     
     if((par_ld>=22 && par_ld<30) || (par_l<=10 && par_l>0)){//robot terlalu ke kiri sehingga perlu memutar ke kanan
       if (kondisiMundur==1) Berdiri();
-//      lcd.setCursor(10,0); lcd.print("kiri");
+      lcd.setCursor(0,1); lcd.print("puing2");
       Putar("kiri", 32, 30);//berputar sejauh 32 derajat 
       kondisiMundur=0;
       
     } else if((par_rd<30 && par_rd>=22) || (par_r<=10 && par_r>00)){//robot terlalu ke kanan sehingga perlu memutar ke kiri
       if (kondisiMundur==1) Berdiri();
-//      lcd.setCursor(10,1); lcd.print("kanan");
+      lcd.setCursor(0,1); lcd.print("puing2");
       Putar("kanan", 32, 30); //berputar sejauh 32 derajat 
       kondisiMundur=0;
       
@@ -40,7 +40,7 @@ void RintanganPuing2(){
       if (kondisiMundur==0) MundurAwal();
 
 //      lcd.setCursor(10,0); lcd.print("maju");
-//      lcd.setCursor(10,1); lcd.print("maju");
+      lcd.setCursor(0,1); lcd.print("puing2");
       MundurKiri(30);
       MundurKiriDorong();
       MundurKanan(30);
@@ -61,7 +61,7 @@ void RintanganPuing2(){
   int readResult=readCompass();
   lcd.setCursor(0,1);
   lcd.print(readResult);
-  while(!(readResult >= 280 && readResult <= 300))
+  while(!(readResult >= min_range_north && readResult <= max_range_north))
   {
     Putar("kiri", 32, 30);//berputar sejauh 32 derajat 
     compass.read();

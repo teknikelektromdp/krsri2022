@@ -40,10 +40,12 @@ void MenujuRoom1(){
     if((par_ld<=13 && par_ld>0) || (par_l<=10 && par_l>0)){//robot terlalu ke kiri sehingga perlu memutar ke kanan
       if (kondisiMaju==1) Berdiri();
       Putar("kanan", 32, 30); 
+      lcd.setCursor(0,1); lcd.print("room1");
       kondisiMaju=0;
       
     } else if((par_rd<=13 && par_rd>0) || (par_r<=10 && par_r>0)){//robot terlalu ke kanan sehingga perlu memutar ke kiri
       if (kondisiMaju==1) Berdiri();
+      lcd.setCursor(0,1); lcd.print("room1");
       Putar("kiri", 32, 30); 
       kondisiMaju=0;
       
@@ -58,6 +60,7 @@ void MenujuRoom1(){
       MajuKiri(30);
       MajuKiriDorong();
 
+      lcd.setCursor(0,1); lcd.print("room1");
       kondisiMaju=1;
     }
   }
