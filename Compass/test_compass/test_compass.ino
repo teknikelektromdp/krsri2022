@@ -17,7 +17,8 @@ int readCompass()
 //Calibrated value
 void compassCalibration()
 {
-  compass.setCalibration(-891, 1147, -1741, 433, -177, 250);  
+//   compass.setCalibration(-891, 1147, -1741, 433, -177, 250);
+  compass.setCalibration(0, 3072, -938, 743, -268, 133);
 }
 void initAzimuth()
 {
