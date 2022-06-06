@@ -94,5 +94,5 @@ int ServoPosisi(String servoNama) {
   
   else if (servoNama.equals("RBT")) return posisiRBT;
   else if (servoNama.equals("RBM")) return posisiRBM;
-  else if (servoNama.equals("RBB")) return posisiRBB;  
+  else if (servoNama.equals("RBB")) return posisiRBB;
 }

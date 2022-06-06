@@ -13,6 +13,45 @@ void Berdiri(){
   ServoWrite("LBB",0);  ServoWrite("RBB",0);
 }
 
+
+int berdiriLftNaik=0, berdiriRftNaik=0,
+    berdiriLbtNaik=0, berdiriRbtNaik=0,
+    berdiriLfmNaik=10, berdiriRfmNaik=10,
+    berdiriLbmNaik=-28, berdiriRbmNaik=-28,
+    berdiriLfbNaik=-10, berdiriRfbNaik=-10,
+//    berdiriLbbNaik=28, berdiriRbbNaik=28;
+    berdiriLbbNaik=10, berdiriRbbNaik=10;
+
+void BerdiriNaik(){
+  ServoWrite("LFT",BerdiriSudut("LFT", 0));  ServoWrite("RFT",BerdiriSudut("RFT", 0));
+  ServoWrite("LBT",BerdiriSudut("LBT", 0));  ServoWrite("RBT",BerdiriSudut("RBT", 0));
+
+  ServoWrite("LFM",BerdiriSudut("LFM", 0));  ServoWrite("RFM",BerdiriSudut("RFM", 0));
+  ServoWrite("LBM",BerdiriSudut("LBM", 0));  ServoWrite("RBM",BerdiriSudut("RBM", 0));
+
+  ServoWrite("LFB",BerdiriSudut("LFB", 0));  ServoWrite("RFB",BerdiriSudut("RFB", 0));
+  ServoWrite("LBB",BerdiriSudut("LBB", 0));  ServoWrite("RBB",BerdiriSudut("RBB", 0));
+}
+
+int BerdiriSudut(String servoNama, int sudut) {
+  if (servoNama.equals("LFT")) return sudut+berdiriLftNaik;
+  else if (servoNama.equals("LFM")) return sudut+berdiriLfmNaik;
+  else if (servoNama.equals("LFB")) return sudut+berdiriLfbNaik;
+  
+  else if (servoNama.equals("LBT")) return sudut+berdiriLbtNaik;
+  else if (servoNama.equals("LBM")) return sudut+berdiriLbmNaik;
+  else if (servoNama.equals("LBB")) return sudut+berdiriLbbNaik;
+  
+  else if (servoNama.equals("RFT")) return sudut+berdiriRftNaik;
+  else if (servoNama.equals("RFM")) return sudut+berdiriRfmNaik;
+  else if (servoNama.equals("RFB")) return sudut+berdiriRfbNaik;
+  
+  else if (servoNama.equals("RBT")) return sudut+berdiriRbtNaik;
+  else if (servoNama.equals("RBM")) return sudut+berdiriRbmNaik;
+  else if (servoNama.equals("RBB")) return sudut+berdiriRbbNaik;
+}
+
+
 /**
  * Fungsi menggerakkan servo dengan perlahan
  */

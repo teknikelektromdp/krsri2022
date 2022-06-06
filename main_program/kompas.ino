@@ -1,18 +1,14 @@
-
-
-
-
 //Get azimuth value
 int readCompass()
 {
   return compass.getAzimuth(); 
 }
 //Calibrated value
-void compassCalibration()
+void CompassCalibration()
 {
   compass.setCalibration(-891, 1147, -1741, 433, -177, 250);  
 }
-void initAzimuth()
+void InitAzimuth()
 {
   min_range_south = 253;
   max_range_south = 260;
@@ -23,7 +19,9 @@ void initAzimuth()
   min_range_west = 0;
   min_range_west = 0;
 }
-void adjustRobotPosition()
+
+//fungsi untuk memutar robot ke selatan
+void AdjustRobotPositionSelatan()
 {
   int readResult=readCompass();
   String arahPutar;
@@ -31,21 +29,23 @@ void adjustRobotPosition()
 
   if(readResult> max_range_south || readResult<148) arahPutar="kiri";
   else if(readResult< min_range_south && readResult>=148)arahPutar="kanan";
-  else arahPutar="kanan";
+  else arahPutar="kiri";
 
  
   while(!(readResult >= min_range_south && readResult <= max_range_south))
   {
-    Putar(arahPutar, 30);
+    Putar(arahPutar, 32, 30);
     compass.read();
     readResult=readCompass();
     lcd.setCursor(0,1);
     lcd.print(readResult);
   }
-  delay(1000);
+//  delay(1000);
 }
+
+
 //Calibrating the compass
-void calibration()
+void Calibration()
 {
   int x, y, z; 
   // Read compass values

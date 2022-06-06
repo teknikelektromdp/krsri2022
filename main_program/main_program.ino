@@ -1,8 +1,12 @@
+#include <MPU6050_light.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <NewPing.h>
 #include <Servo.h>
 #include <QMC5883LCompass.h>
+#include "MLX90621.h"
+#include <Pixy2.h>
+#include <Servo.h>
 
 
 LiquidCrystal_I2C lcd(0x27,16,2);
@@ -39,16 +43,16 @@ int lfmUp=39,   lfmDown=117,
     rfmUp=136,  rfmDown=58,
 //    rfmUp=137,  rfmDown=59, //nilai lama
     rbmUp=142,  rbmDown=64,
-    rfmTegak, rbmTegak, 
-    lfmTegak, lbmTegak;
+    rfmTegak,   rbmTegak, 
+    lfmTegak,   lbmTegak;
 
 //servo bottom
 int lfbIn=41,   lfbOut=136,
     lbbIn=36,   lbbOut=131,
     rfbIn=140,  rfbOut=45,
     rbbIn=140,  rbbOut=45,
-    lfbTegak, lbbTegak,
-    rfbTegak, rbbTegak;
+    lfbTegak,   lbbTegak,
+    rfbTegak,   rbbTegak;
 
 //posisi servo saat ini
 int posisiLFT=0, posisiLFM=0, posisiLFB=0,
@@ -60,7 +64,6 @@ int posisiLFT=0, posisiLFM=0, posisiLFB=0,
 int delayWaktu=4;
 
 
-
 //kompas
 QMC5883LCompass compass;
 int min_range_south, max_range_south, min_range_north, max_range_north, min_range_east, max_range_east, min_range_west, max_range_west;
@@ -70,12 +73,27 @@ bool done = false;
 int t = 0;
 int c = 0;
 
+//pixy
+#define ambil  0
+#define letak  1
+Pixy2 pixy;
+Servo fire;
+
+//Kamera termal
+MLX90621 termal; // create an instance of the Sensor class
+
+
+//IMU
+MPU6050 mpu(Wire);
+
 
 void setup() {
+  Serial.begin(115200); //170ms a 19k2, 28ms a 115k2
+  
   servoLFT.attach(44);  servoLFM.attach(46);  servoLFB.attach(6);
-  servoLBT.attach(9);  servoLBM.attach(4);  servoLBB.attach(2);
-  servoRFT.attach(7);  servoRFM.attach(10);  servoRFB.attach(8);  
-  servoRBT.attach(3);  servoRBM.attach(5);  servoRBB.attach(12);
+  servoLBT.attach(9);   servoLBM.attach(4);   servoLBB.attach(2);
+  servoRFT.attach(7);   servoRFM.attach(10);  servoRFB.attach(8);  
+  servoRBT.attach(3);   servoRBM.attach(5);   servoRBB.attach(12);
 
   lftTegak=lftForward + 43; lbtTegak=lbtForward + 32;
   rftTegak=rftForward - 43; rbtTegak=rbtForward - 32;
@@ -86,16 +104,55 @@ void setup() {
   lfbTegak=lfbIn + 51; lbbTegak=lbbIn + 51;
   rfbTegak=rfbIn - 51; rbbTegak=rbbIn - 51;
 
-  Serial.begin(9600);
+
+  //Inisiasi kamera termal
+  termal.setRefreshRate(RATE_8HZ);
+  termal.setResolution(RES_17bit);
+  termal.setEmissivity(1.0);
+  termal.initialize ();
+
+  //Inisiasi lcd
   lcd.init();
   lcd.backlight();
   lcd.print("Start!");
+  
+  fire.attach(45);
+  pixy.init();
+
+  //Close the grip
+  pixy.setServos(500, 500);//berurut ke arah luar  (angkat, jepit), (angkat=0, turun=500), (jepit=0, buka=500)
+//  pixy.setLamp(1, 0);
+//  padam(200);
+
+  
+////IMU
+//  Wire.begin();
+//  mpu.begin();
+//  //Start calculating the offset
+//  delay(1000);
+//  lcd.clear();
+//  mpu.calcOffsets(true,true);
+
 }
 
+
+
+
+
 void loop() {
-  delay(200);
+  lcd.clear();
+
+
+//  for(int i=0; i<10; i++){
+//    Padam(500);
+//    delay(1000);
+//  }
+
+  //Algorima rute
   Berdiri();
-  delay(200);
+  delay(2000);
+
+
 
   /**
    * robot menentukan hadap keluar home
@@ -118,42 +175,314 @@ void loop() {
   RintanganPuing1();
 
 
-  delay(100000000);
+  /**
+   * Robot melalui rintangan naik-turun
+   */
+  NaikTurun();
+
+  //Setelah selesai dengan rintangan naik-turun
+  MenujuRoom1();
+
+  //robot melalui rintangan puing 2
+  RintanganPuing2();
+
 
 
   /**
-   * Wall following
-  
-  void WallFollowing()
-  {
-    //cek persimpangan sebelah kiri dan kanan
-    if(LeftIntersect() == true || RightIntersect() == true)
-    {
-      if(LeftIntersect() == true)
-      {
-        for(int i = 0; )
-        PutarKiri();
-      } 
-      else
-      {
-        //cek apakah ada dinding di depan robot atau ridak
-        if(is_front_wall() == true)
-        {
-          Serial.println("Turn right");
+   * Penyelamatan dan pemadaman
+   */
+
+
+    Berdiri();
+    int apiAda=0, apiSuhu=45;
+    double termalBaca=TermalMaxTemp();
+
+    if (termalBaca>=apiSuhu){
+      apiAda=1;
+      lcd.setCursor(0,0);
+      lcd.print(termalBaca); lcd.print(" api");
+    }
+    else {
+      while(apiAda==0){
+
+        int i=0;
+        while(apiAda==0 && i<=30) {
+          i++;
+          ServoWrite("LFT", i);
+          ServoWrite("RFT", -i);
+          ServoWrite("LBT", i);
+          ServoWrite("RBT", -i);
+          termalBaca=TermalMaxTemp();
+          delay(50);
+          if (termalBaca>=apiSuhu) apiAda=1;
+          lcd.clear();
+          lcd.setCursor(0,0); lcd.print(termalBaca);
+          lcd.setCursor(0,1); lcd.print(i);
         }
-        else
-        {
-          Serial.println("Go straight");  
+
+        //memutar badan robot jika api masih belum ketemu pada saat pencarian sebelumnya
+        if (apiAda==0){
+          //majukan kaki kiri belakang bersamaan dengan menaikkannya
+          ServoMovementDouble("LFT", 15, "LFM", 40);
+          //majukan kaki kiri belakang bersamaan dengan menurunkannya
+          ServoMovementDouble("LFT", 0, "LFM", 0);
+          delay(50);
+          
+          //majukan kaki kiri belakang bersamaan dengan menaikkannya
+          ServoMovementDouble("LBT", 15, "LBM", 40);
+          //majukan kaki kiri belakang bersamaan dengan menurunkannya
+          ServoMovementDouble("LBT", 0, "LBM", 0);
+          delay(50);
+  
+          //majukan kaki kiri belakang bersamaan dengan menaikkannya
+          ServoMovementDouble("RBT", -15, "RBM", 40);
+          //majukan kaki kiri belakang bersamaan dengan menurunkannya
+          ServoMovementDouble("RBT", 0, "RBM", 0);
+          delay(50);
+  
+          //majukan kaki kiri belakang bersamaan dengan menaikkannya
+          ServoMovementDouble("RFT", -15, "RFM", 40);
+          //majukan kaki kiri belakang bersamaan dengan menurunkannya
+          ServoMovementDouble("RFT", 0, "RFM", 0);
+          delay(50);
+          lcd.clear();
+          lcd.setCursor(0,0); lcd.print(termalBaca);   
         }
       }
     }
-    else
-    {
-      Serial.println("Follow the current line"); 
-    }
-  }
-*/
 
+    Padam(500);
+
+    
+  //robot kembali ke safe zone
+    Berdiri();
+    MajuAwal();
+    while(Paralax("front")>30){
+      MajuKanan(50);
+      MajuKananDorong();
+      MajuKiri(50);
+      MajuKiriDorong();
+    }
+    compass.init();
+    CompassCalibration(); 
+    compass.read();
+    InitAzimuth();
+    AdjustRobotPositionSelatan();
+    Grip(1);
+
+
+
+//  Berdiri();
+//
+//  BerdiriNaik();
+//
+//  NaikMajuAwal();
+//  while(Paralax("front")==0 || Paralax("front")>60){
+//    NaikMajuKanan();
+//    NaikMajuKananDorong();
+//    NaikMajuKiri();
+//    NaikMajuKiriDorong();
+//  }
+//
+//    int par_ld, par_rd, par_r, par_l, par_f;
+//    par_ld=Paralax("leftDiagonal");
+//    par_rd=Paralax("rightDiagonal");
+//    par_r=Paralax("right");
+//    par_l=Paralax("left");
+//    par_f=Paralax("front");
+//    lcd.clear();
+//
+//    lcd.setCursor(0,0); lcd.print("LD");lcd.print(par_ld); lcd.print(" RD");lcd.print(par_rd);lcd.print(" R");lcd.print(par_r);
+//    lcd.setCursor(0,1); lcd.print("L");lcd.print(par_l);lcd.print(" F");lcd.print(par_f);
+//
+//
+//    delay(100000000);
+
+
+
+
+//    int par_g, par_f;
+//
+//    par_g=Paralax("gripper");
+//    par_f=Paralax("front");
+//
+//    Berdiri();
+//    lcd.setCursor(5, 0); lcd.print("g ");lcd.print(par_g);
+//    lcd.setCursor(5, 1); lcd.print("F ");lcd.print(par_f);
+//    delay(100);
+//    lcd.clear();
+//    
+//    MundurAwal();
+////    while((Paralax("gripper")>30 || Paralax("gripper")==0) && (Paralax("front")<80 && Paralax("front")>0)){
+////    while((Paralax("gripper")>25) || Paralax("gripper")==0){
+//    while((par_f<120) && par_f>0){
+//      MundurKiri(50);
+//      MundurKiriDorong();
+//      MundurKanan(50);
+//      MundurKananDorong();
+//      lcd.clear();
+//      lcd.setCursor(7, 0); lcd.print("g ");lcd.print(par_g);
+//      lcd.setCursor(7, 1); lcd.print("F ");lcd.print(par_f);
+//      lcd.setCursor(0,0); lcd.print("mundur");
+//      par_g=Paralax("gripper");
+//      par_f=Paralax("front");
+//    }
+//
+//
+//    
+//    Berdiri();
+//    int apiAda=0, apiSuhu=45;
+//    double termalBaca=TermalMaxTemp();
+//
+//    if (termalBaca>=apiSuhu){
+//      apiAda=1;
+//      lcd.setCursor(0,0);
+//      lcd.print(termalBaca); lcd.print(" api");
+//    }
+//    else {
+//      while(apiAda==0){
+//
+//        int i=0;
+//        while(apiAda==0 && i<=30) {
+//          i++;
+//          ServoWrite("LFT", i);
+//          ServoWrite("RFT", -i);
+//          ServoWrite("LBT", i);
+//          ServoWrite("RBT", -i);
+//          termalBaca=TermalMaxTemp();
+//          delay(50);
+//          if (termalBaca>=apiSuhu) apiAda=1;
+//          lcd.clear();
+//          lcd.setCursor(0,0); lcd.print(termalBaca);
+//          lcd.setCursor(0,1); lcd.print(i);
+//        }
+//
+//        //memutar badan robot jika api masih belum ketemu pada saat pencarian sebelumnya
+//        if (apiAda==0){
+//          //majukan kaki kiri belakang bersamaan dengan menaikkannya
+//          ServoMovementDouble("LFT", 15, "LFM", 50);
+//          //majukan kaki kiri belakang bersamaan dengan menurunkannya
+//          ServoMovementDouble("LFT", 0, "LFM", 0);
+//          delay(50);
+//          
+//          //majukan kaki kiri belakang bersamaan dengan menaikkannya
+//          ServoMovementDouble("LBT", 15, "LBM", 50);
+//          //majukan kaki kiri belakang bersamaan dengan menurunkannya
+//          ServoMovementDouble("LBT", 0, "LBM", 0);
+//          delay(50);
+//  
+//          //majukan kaki kiri belakang bersamaan dengan menaikkannya
+//          ServoMovementDouble("RBT", -15, "RBM", 50);
+//          //majukan kaki kiri belakang bersamaan dengan menurunkannya
+//          ServoMovementDouble("RBT", 0, "RBM", 0);
+//          delay(50);
+//  
+//          //majukan kaki kiri belakang bersamaan dengan menaikkannya
+//          ServoMovementDouble("RFT", -15, "RFM", 50);
+//          //majukan kaki kiri belakang bersamaan dengan menurunkannya
+//          ServoMovementDouble("RFT", 0, "RFM", 0);
+//          delay(50);
+//          lcd.clear();
+//          lcd.setCursor(0,0); lcd.print(termalBaca);   
+//        }
+//      }
+//    }
+//
+//    Padam(500);
+
+//    Berdiri();
+//    MajuAwal();
+//    while(Paralax("front")>30){
+//      MajuKanan(50);
+//      MajuKananDorong();
+//      MajuKiri(50);
+//      MajuKiriDorong();
+//    }
+//    compass.init();
+//    CompassCalibration(); 
+//    compass.read();
+//    InitAzimuth();
+//    AdjustRobotPositionSelatan();
+//    Grip(1);
+
+
+
+
+
+    delay(10000000000);
+    
+//    while(termalBaca<40){
+//      lcd.setCursor(0,0); lcd.print(termalBaca);
+//      for(int a=0;a<=30; a++){
+//        ServoWrite("LFT", a);
+//        ServoWrite("RFT", -a);
+//        ServoWrite("LBT", a);
+//        ServoWrite("RBT", -a);
+//        termalBaca=TermalMaxTemp();
+//        delay(1000);
+//        lcd.clear();
+//        lcd.setCursor(0,0); lcd.print(termalBaca);
+//        lcd.setCursor(0,1); lcd.print(a);
+//      }
+      
+//      if(a==30){
+//        //majukan kaki kiri belakang bersamaan dengan menaikkannya
+//        ServoMovementDouble("LFT", (a/2), "LFM", 30);
+//        //majukan kaki kiri belakang bersamaan dengan menurunkannya
+//        ServoMovementDouble("LFT", 0, "LFM", 0);
+//        delay(100);
+//        
+//        //majukan kaki kiri belakang bersamaan dengan menaikkannya
+//        ServoMovementDouble("LBT", (a/2), "LBM", 30);
+//        //majukan kaki kiri belakang bersamaan dengan menurunkannya
+//        ServoMovementDouble("LBT", 0, "LBM", 0);
+//        delay(100);
+//
+//        //majukan kaki kiri belakang bersamaan dengan menaikkannya
+//        ServoMovementDouble("RBT", -(a/2), "RBM", 30);
+//        //majukan kaki kiri belakang bersamaan dengan menurunkannya
+//        ServoMovementDouble("RBT", 0, "RBM", 0);
+//        delay(100);
+//
+//        //majukan kaki kiri belakang bersamaan dengan menaikkannya
+//        ServoMovementDouble("RFT", -(a/2), "RFM", 30);
+//        //majukan kaki kiri belakang bersamaan dengan menurunkannya
+//        ServoMovementDouble("RFT", 0, "RFM", 0);
+//        delay(100);
+//        lcd.clear();
+//        lcd.setCursor(0,0); lcd.print(termal.getMaxTemp());
+//      }
+
+    
+//    if(termal.getMaxTemp()>=45){
+//      lcd.setCursor(12, 1);lcd.print("api");
+//    }
+//    else{
+//      lcd.setCursor(12, 1); lcd.print("   ");
+//    }
+//    delay(1000);
+
+
+//    MajuAwal();
+//    while((Paralax("front")==0 || Paralax("front")>60) && !(Paralax("left")==0 && Paralax("right")==0)){
+//      MajuKanan(30);
+//      MajuKananDorong();
+//      MajuKiri(30);
+//      MajuKiriDorong();
+//    }
+//  MenujuRoom1();
+//  
+//  Berdiri();
+//
+//  MundurAwal();
+//  while(true){
+//    MundurKiri(50);
+//    MundurKiriDorong();
+//    MundurKanan(50);
+//    MundurKananDorong();
+
+
+//    delay(100000000);
 
 //  while(LeftIntersect() == false){
 //    MajuKanan(30);

@@ -1,7 +1,7 @@
 /**
  * Fungsi memutar tubuh robot
  */
-void Putar(String arah, int tinggiAngkat) {
+void Putar(String arah, int jauhGerakan, int tinggiAngkat) {//jauh gerakan maksimal 32
   String pasanganServo11, pasanganServo12, 
          pasanganServo21, pasanganServo22,
          pasanganServo31, pasanganServo32,
@@ -20,27 +20,27 @@ void Putar(String arah, int tinggiAngkat) {
   }
 
   //mundurkan kaki kiri depan bersamaan dengan menaikkannya
-  ServoMovementDouble(pasanganServo11, -16, pasanganServo12, tinggiAngkat);
+  ServoMovementDouble(pasanganServo11, -(jauhGerakan/2), pasanganServo12, tinggiAngkat);
   //mundurkan kaki kiri depan bersamaan dengan menurunkannya
-  ServoMovementDouble(pasanganServo11, -32, pasanganServo12, 0);
+  ServoMovementDouble(pasanganServo11, -(jauhGerakan), pasanganServo12, 0);
   delay(100);
   
   //mundurkan kaki kiri belakang bersamaan dengan menaikkannya
-  ServoMovementDouble(pasanganServo21, -16, pasanganServo22, tinggiAngkat);
+  ServoMovementDouble(pasanganServo21, -(jauhGerakan/2), pasanganServo22, tinggiAngkat);
   //mundurkan kaki kiri belakang bersamaan dengan menurunkannya
-  ServoMovementDouble(pasanganServo21, -32, pasanganServo22, 0);
+  ServoMovementDouble(pasanganServo21, -(jauhGerakan), pasanganServo22, 0);
   delay(100);
 
   //majukan kaki kanan belakang bersamaan dengan menaikkannya
-  ServoMovementDouble(pasanganServo31, 16, pasanganServo32, tinggiAngkat);
+  ServoMovementDouble(pasanganServo31, (jauhGerakan/2), pasanganServo32, tinggiAngkat);
   //majukan kaki kanan belakang bersamaan dengan menurunkannya
-  ServoMovementDouble(pasanganServo31, 32, pasanganServo32, 0);
+  ServoMovementDouble(pasanganServo31, jauhGerakan, pasanganServo32, 0);
   delay(100);
   
   //majukan kaki kanan depan bersamaan dengan menaikkannya
-  ServoMovementDouble(pasanganServo41, 16, pasanganServo42, tinggiAngkat);
+  ServoMovementDouble(pasanganServo41, (jauhGerakan/2), pasanganServo42, tinggiAngkat);
   //majukan kaki kanan depan bersamaan dengan menurunkannya
-  ServoMovementDouble(pasanganServo41, 32, pasanganServo42, 0);
+  ServoMovementDouble(pasanganServo41, jauhGerakan, pasanganServo42, 0);
   delay(100);
 
   //balik kedua kaki atas bersamaan tanpa menaikkannya
@@ -49,10 +49,4 @@ void Putar(String arah, int tinggiAngkat) {
   //balik kedua kaki atas bersamaan tanpa menaikkannya
   ServoMovementDouble(pasanganServo31, 0, pasanganServo41, 0);
   delay(10);
-}
-
-void Putar90(String arah, int tinggiAngkat){
-  for(int i = 0; i<=5; i++){
-    Putar(arah, tinggiAngkat);
-  }
 }

@@ -1,6 +1,6 @@
 #define SONAR_NUM 6      // Number of sensors.
-#define MAX_DISTANCE 60 // Maximum distance (in cm) to ping.
-#define MAX_DISTANCE_FRONT 20 // Maximum distance (in cm) to ping.
+#define MAX_DISTANCE 80 // Maximum distance (in cm) to ping.
+#define MAX_DISTANCE_FRONT 200 // Maximum distance (in cm) to ping.
 
 //ultrasonic pins
 const byte left = 24, leftDiagonal = 26, front = 27, rightDiagonal = 25, right = 23, gripper = 22;
@@ -125,3 +125,36 @@ bool FrontWall()
     return true;  
   }
 }
+
+/**
+   * Wall following
+  
+  void WallFollowing()
+  {
+    //cek persimpangan sebelah kiri dan kanan
+    if(LeftIntersect() == true || RightIntersect() == true)
+    {
+      if(LeftIntersect() == true)
+      {
+        for(int i = 0; )
+        PutarKiri();
+      } 
+      else
+      {
+        //cek apakah ada dinding di depan robot atau ridak
+        if(is_front_wall() == true)
+        {
+          Serial.println("Turn right");
+        }
+        else
+        {
+          Serial.println("Go straight");  
+        }
+      }
+    }
+    else
+    {
+      Serial.println("Follow the current line"); 
+    }
+  }
+*/
