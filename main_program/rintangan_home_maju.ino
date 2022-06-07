@@ -11,14 +11,14 @@ void RintanganHomeMaju() {
 
     if((par_ld<=13 && par_ld>0) || (par_l<=10 && par_l>0)){//robot terlalu ke kiri sehingga perlu memutar ke kanan
       if (kondisiMaju==1) Berdiri();
-      modeGerak = "home maju";
+      modeGerak = "hm";
       LcdDisplay();
       Putar("kanan", 32, 30);//berputar sejauh 32 derajat 
       kondisiMaju=0;
       
     } else if((par_rd<=13 && par_rd>0) || (par_r<=10 && par_r>0)){//robot terlalu ke kanan sehingga perlu memutar ke kiri
       if (kondisiMaju==1) Berdiri();
-      modeGerak = "home maju";
+      modeGerak = "hm";
       LcdDisplay();
       Putar("kiri", 32, 30); //berputar sejauh 32 derajat 
       kondisiMaju=0;
@@ -29,7 +29,7 @@ void RintanganHomeMaju() {
     } else{//robot lurus sehingga meneruskan untuk maju
       if (kondisiMaju==0) MajuAwal();
 
-      modeGerak = "home maju";
+      modeGerak = "hm";
       LcdDisplay();
       Maju(30);
 
@@ -45,14 +45,14 @@ void RintanganHomeMaju() {
   LcdDisplay();
   while(!(kompasValue >= min_range_east && kompasValue <= max_range_east))
   {
-    modeGerak="kiri1";
+    modeGerak="ki1";
     LcdDisplay();
     
     Putar("kiri", 32, 30);//berputar sejauh 32 derajat 
     BacaSensor();
     LcdDisplay();
   }
-  modeGerak = "maju";
+  modeGerak = "mj";
   BacaSensor();
   LcdDisplay();
 }

@@ -18,7 +18,7 @@ void RintanganNaikTurun(){
     NaikMaju();
     
     BacaSensor();
-    modeGerak="naik";
+    modeGerak="nt";
     LcdDisplay();
     
     if ((par_f<45 && par_f>0) && (par_r>40 || par_r==0)) {

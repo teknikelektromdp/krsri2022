@@ -51,7 +51,7 @@ void AdjustRobotPositionSelatan()
     }
       
     BacaSensor();
-    modeGerak="home";
+    modeGerak="h";
     LcdDisplay();
   }
 }

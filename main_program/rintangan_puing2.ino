@@ -10,14 +10,14 @@ void RintanganPuing2(){
   while(dindingRuang1==0){
     if((par_ld>=22 && par_ld<30) || (par_l<=10 && par_l>0)){//robot terlalu ke kiri sehingga perlu memutar ke kanan
       if (kondisiMundur==1) Berdiri();
-      modeGerak="puing2";
+      modeGerak="p2";
       LcdDisplay();
       Putar("kiri", 32, 50);//berputar sejauh 32 derajat 
       kondisiMundur=0;
       
     } else if((par_rd<30 && par_rd>=22) || (par_r<=10 && par_r>00)){//robot terlalu ke kanan sehingga perlu memutar ke kiri
       if (kondisiMundur==1) Berdiri();
-      modeGerak="puing2";
+      modeGerak="p2";
       LcdDisplay();
       Putar("kanan", 32, 50); //berputar sejauh 32 derajat 
       kondisiMundur=0;
@@ -28,7 +28,7 @@ void RintanganPuing2(){
     } else{//robot lurus sehingga meneruskan untuk maju
       if (kondisiMundur==0) MundurAwal();
 
-      modeGerak="puing2";
+      modeGerak="p2";
       LcdDisplay();
       
       Mundur(50);
@@ -47,7 +47,7 @@ void RintanganPuing2(){
   LcdDisplay();
   while(!(kompasValue >= min_range_north && kompasValue <= max_range_north))
   {
-    modeGerak="kiri5";
+    modeGerak="ki5";
     LcdDisplay();
     Putar("kiri", 32, 30);//berputar sejauh 32 derajat 
     

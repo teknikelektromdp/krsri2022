@@ -12,14 +12,14 @@ void RintanganPuing1(){
     
     if((par_ld<=13 && par_ld>0) || (par_l<=10 && par_l>0)){
       if (kondisiMaju==1) Berdiri();
-      modeGerak="puing1";
+      modeGerak="p1";
       LcdDisplay();
       Putar("kanan", 32, 50); //berputar sejauh 32 derajat 
       kondisiMaju=0;
       
     } else if((par_rd<=13 && par_rd>0) || (par_r<=10 && par_r>0)){
       if (kondisiMaju==1) Berdiri();
-      modeGerak="puing1";
+      modeGerak="p1";
       LcdDisplay();
       Putar("kiri", 32,50); //berputar sejauh 32 derajat 
       kondisiMaju=0;
@@ -33,7 +33,7 @@ void RintanganPuing1(){
     } else{
       if (kondisiMaju==0) MajuAwal();
       
-      modeGerak="puing1";
+      modeGerak="p1";
       LcdDisplay();
       
       Maju(50);
@@ -50,7 +50,7 @@ void RintanganPuing1(){
   LcdDisplay();
   while(!(kompasValue >= min_range_north && kompasValue <= max_range_north))
   {
-    modeGerak="kiri2";
+    modeGerak="ki2";
     LcdDisplay();
     
     Putar("kiri", 32, 30);//berputar sejauh 32 derajat 
@@ -58,7 +58,7 @@ void RintanganPuing1(){
     BacaSensor();
     LcdDisplay();
   }
-  modeGerak="maju";
+  modeGerak="mj";
   BacaSensor();
   LcdDisplay();
 }

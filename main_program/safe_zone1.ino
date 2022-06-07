@@ -38,7 +38,7 @@ void SafeZone1(){
   LcdDisplay();
   while(!(kompasValue >= min_range_south && kompasValue <= max_range_south))
   {
-    modeGerak="kiri6";
+    modeGerak="ki6";
     LcdDisplay();
     
     Putar("kiri", 32, 30);//berputar sejauh 32 derajat 
