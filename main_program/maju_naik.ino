@@ -11,6 +11,14 @@ void NaikMajuAwal() {
   delay(1);
 }
 
+//gabungan prosedur maju naik
+void NaikMaju(){
+    NaikMajuKanan();
+    NaikMajuKananDorong();
+    NaikMajuKiri();
+    NaikMajuKiriDorong();
+}
+
 void NaikMajuKanan() {
   //majukan kaki kanan belakang bersamaan dengan menaikkannya
   ServoMovementDouble("RBT", BerdiriSudut("RBT", (naikMajuBelakang/2)), "RBM", BerdiriSudut("RBM", 78));

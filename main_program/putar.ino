@@ -23,30 +23,30 @@ void Putar(String arah, int jauhGerakan, int tinggiAngkat) {//jauh gerakan maksi
   ServoMovementDouble(pasanganServo11, -(jauhGerakan/2), pasanganServo12, tinggiAngkat);
   //mundurkan kaki kiri depan bersamaan dengan menurunkannya
   ServoMovementDouble(pasanganServo11, -(jauhGerakan), pasanganServo12, 0);
-  delay(100);
+  delay(1);
   
   //mundurkan kaki kiri belakang bersamaan dengan menaikkannya
   ServoMovementDouble(pasanganServo21, -(jauhGerakan/2), pasanganServo22, tinggiAngkat);
   //mundurkan kaki kiri belakang bersamaan dengan menurunkannya
   ServoMovementDouble(pasanganServo21, -(jauhGerakan), pasanganServo22, 0);
-  delay(100);
+  delay(1);
 
   //majukan kaki kanan belakang bersamaan dengan menaikkannya
   ServoMovementDouble(pasanganServo31, (jauhGerakan/2), pasanganServo32, tinggiAngkat);
   //majukan kaki kanan belakang bersamaan dengan menurunkannya
   ServoMovementDouble(pasanganServo31, jauhGerakan, pasanganServo32, 0);
-  delay(100);
+  delay(1);
   
   //majukan kaki kanan depan bersamaan dengan menaikkannya
   ServoMovementDouble(pasanganServo41, (jauhGerakan/2), pasanganServo42, tinggiAngkat);
   //majukan kaki kanan depan bersamaan dengan menurunkannya
   ServoMovementDouble(pasanganServo41, jauhGerakan, pasanganServo42, 0);
-  delay(100);
+  delay(1);
 
   //balik kedua kaki atas bersamaan tanpa menaikkannya
   ServoMovementDouble(pasanganServo11, 0, pasanganServo21, 0);
-  delay(10);
+  delay(1);
   //balik kedua kaki atas bersamaan tanpa menaikkannya
   ServoMovementDouble(pasanganServo31, 0, pasanganServo41, 0);
-  delay(10);
+  delay(1);
 }

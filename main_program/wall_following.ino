@@ -1,9 +1,9 @@
-#define SONAR_NUM 6      // Number of sensors.
+#define SONAR_NUM 7      // Number of sensors.
 #define MAX_DISTANCE 80 // Maximum distance (in cm) to ping.
 #define MAX_DISTANCE_FRONT 200 // Maximum distance (in cm) to ping.
-
+#define MAX_DISTANCE_BEHIND 200 // Maximum distance (in cm) to ping.
 //ultrasonic pins
-const byte left = 24, leftDiagonal = 26, front = 27, rightDiagonal = 25, right = 23, gripper = 22;
+const byte left = 24, leftDiagonal = 26, front = 27, rightDiagonal = 25, right = 23, gripper = 22, behind = 28;
 const byte leftBoundary = 8, rightBoundary = 8;
 
 NewPing sonar[SONAR_NUM] = {   // Sensor object array.
@@ -12,6 +12,7 @@ NewPing sonar[SONAR_NUM] = {   // Sensor object array.
   NewPing(front, front, MAX_DISTANCE_FRONT),
   NewPing(rightDiagonal, rightDiagonal, MAX_DISTANCE), 
   NewPing(right, right, MAX_DISTANCE),
+  NewPing(behind, behind, MAX_DISTANCE_BEHIND),
   NewPing(gripper, gripper, MAX_DISTANCE) 
 };
 
@@ -39,9 +40,13 @@ int Paralax(String sensor)
   {
     return sonar[4].ping_cm();
   }
-  else
+  else if(sensor == "behind")
   {
     return sonar[5].ping_cm();
+  }
+  else
+  {
+    return sonar[6].ping_cm();
   }
 }
 

@@ -11,6 +11,14 @@ void MajuAwal() {
   delay(1);
 }
 
+//gabungan prosedur maju
+void Maju(int tinggiAngkat){
+  MajuKanan(tinggiAngkat);
+  MajuKananDorong();
+  MajuKiri(tinggiAngkat);
+  MajuKiriDorong();
+}
+
 void MajuKanan(int tinggiAngkat //ketinggian servo middle yang diangkat
 ) {
   //majukan kaki kanan belakang bersamaan dengan menaikkannya

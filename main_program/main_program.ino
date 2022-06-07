@@ -41,7 +41,6 @@ int lftForward=60,  lftBackward=138,
 int lfmUp=39,   lfmDown=117,
     lbmUp=35,   lbmDown=113,
     rfmUp=136,  rfmDown=58,
-//    rfmUp=137,  rfmDown=59, //nilai lama
     rbmUp=142,  rbmDown=64,
     rfmTegak,   rbmTegak, 
     lfmTegak,   lbmTegak;
@@ -72,6 +71,12 @@ bool changed = false;
 bool done = false;
 int t = 0;
 int c = 0;
+int kompasValue;//menyimpan nilai kompas
+
+//paralax
+int par_l, par_ld, par_f, par_rd, par_r, par_g, par_b;//menyimpan nilai paralax
+
+String modeGerak;//menyimpan mode pergerakan
 
 //pixy
 #define ambil  0
@@ -82,18 +87,20 @@ Servo fire;
 //Kamera termal
 MLX90621 termal; // create an instance of the Sensor class
 
-
 //IMU
 MPU6050 mpu(Wire);
 
 
 void setup() {
-  Serial.begin(9600); //170ms a 19k2, 28ms a 115k2
-  
+//  Serial.begin(9600); //170ms a 19k2, 28ms a 115k2
+
+  //servo untuk kaki
   servoLFT.attach(44);  servoLFM.attach(46);  servoLFB.attach(6);
   servoLBT.attach(9);   servoLBM.attach(4);   servoLBB.attach(2);
   servoRFT.attach(7);   servoRFM.attach(10);  servoRFB.attach(8);  
   servoRBT.attach(3);   servoRBM.attach(5);   servoRBB.attach(12);
+  //servo untuk CO2
+  fire.attach(45);  fire.write(10); 
 
   lftTegak=lftForward + 43; lbtTegak=lbtForward + 32;
   rftTegak=rftForward - 43; rbtTegak=rbtForward - 32;
@@ -105,22 +112,18 @@ void setup() {
   rfbTegak=rfbIn - 51; rbbTegak=rbbIn - 51;
 
 
-  //Inisiasi kamera termal
-  termal.setRefreshRate(RATE_8HZ);
-  termal.setResolution(RES_17bit);
-  termal.setEmissivity(1.0);
-  termal.initialize ();
-
-  //Inisiasi lcd
-  lcd.init();
-  lcd.backlight();
-  lcd.print("Start!");
+  //inisialisasi termal
+  TermalSetup();
   
-  fire.attach(45);
+  //Inisiasi lcd
+  LcdSetup();
+
+
+  //inisialisasi kompas
+  CompassSetup();
+
+  //inisialisasi pixy
   pixy.init();
-
-  compass.init();
-
   //Close the grip
   pixy.setServos(500, 25);//berurut ke arah luar  (angkat, jepit), (angkat=0, turun=500), (jepit=25, buka=500)
 //  pixy.setLamp(1, 0);
@@ -128,12 +131,12 @@ void setup() {
 
   
 //IMU
-  Wire.begin();
-  mpu.begin();
-  //Start calculating the offset
-  delay(1000);
-  lcd.clear();
-  mpu.calcOffsets(true,true);
+//  Wire.begin();
+//  mpu.begin();
+//  //Start calculating the offset
+//  delay(1000);
+//  lcd.clear();
+//  mpu.calcOffsets(true,true);
 
 }
 
@@ -153,7 +156,7 @@ void loop() {
 ///////////////////////////////////////Algorima rute/////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
   Berdiri();
-  delay(200);
+
   
   /**
    * robot menentukan hadap keluar home
@@ -179,10 +182,10 @@ void loop() {
   /**
    * Robot melalui rintangan naik-turun
    */
-  NaikTurun();
+  RintanganNaikTurun();
 
   //Setelah selesai dengan rintangan naik-turun
-  MenujuRoom1();
+  RintanganMenujuRoom1();
 
   //robot melalui rintangan puing 2
   RintanganPuing2();
@@ -191,7 +194,7 @@ void loop() {
 
   /**
    * Penyelamatan dan pemadaman
-   */
+    */
       Berdiri();
       int apiAda=0, apiSuhu=45;
       double termalBaca=TermalMaxTemp();
@@ -217,7 +220,7 @@ void loop() {
             lcd.clear();
             lcd.setCursor(0,0); lcd.print(termalBaca);lcd.print(i);
 
-            lcd.setCursor(0,1); lcd.print("padam");
+            lcd.setCursor(0,1); lcd.print("cari");
           }
   
           //memutar badan robot jika api masih belum ketemu pada saat pencarian sebelumnya
@@ -252,11 +255,10 @@ void loop() {
         }
       }
   
-//      Padam(200);
+      Padam(300);
     lcd.clear();
     lcd.print("Done");
 
-    
   /**
    * robot kembali ke safe zone
     Berdiri();
@@ -285,33 +287,6 @@ delay(10000000000000000000000);
 
 
 
-//  Berdiri();
-//
-//  BerdiriNaik();
-//
-//  NaikMajuAwal();
-//  while(Paralax("front")==0 || Paralax("front")>60){
-//    NaikMajuKanan();
-//    NaikMajuKananDorong();
-//    NaikMajuKiri();
-//    NaikMajuKiriDorong();
-//  }
-//
-//    int par_ld, par_rd, par_r, par_l, par_f;
-//    par_ld=Paralax("leftDiagonal");
-//    par_rd=Paralax("rightDiagonal");
-//    par_r=Paralax("right");
-//    par_l=Paralax("left");
-//    par_f=Paralax("front");
-//    lcd.clear();
-//
-//    lcd.setCursor(0,0); lcd.print("LD");lcd.print(par_ld); lcd.print(" RD");lcd.print(par_rd);lcd.print(" R");lcd.print(par_r);
-//    lcd.setCursor(0,1); lcd.print("L");lcd.print(par_l);lcd.print(" F");lcd.print(par_f);
-//
-//
-//    delay(100000000);
-
-
 
 
 //
@@ -336,50 +311,6 @@ delay(10000000000000000000000);
 
 
     
-//    while(termalBaca<40){
-//      lcd.setCursor(0,0); lcd.print(termalBaca);
-//      for(int a=0;a<=30; a++){
-//        ServoWrite("LFT", a);
-//        ServoWrite("RFT", -a);
-//        ServoWrite("LBT", a);
-//        ServoWrite("RBT", -a);
-//        termalBaca=TermalMaxTemp();
-//        delay(1000);
-//        lcd.clear();
-//        lcd.setCursor(0,0); lcd.print(termalBaca);
-//        lcd.setCursor(0,1); lcd.print(a);
-//      }
-      
 
-    
-//    if(termal.getMaxTemp()>=45){
-//      lcd.setCursor(12, 1);lcd.print("api");
-//    }
-//    else{
-//      lcd.setCursor(12, 1); lcd.print("   ");
-//    }
-//    delay(1000);
-
-
-//    MajuAwal();
-//    while((Paralax("front")==0 || Paralax("front")>60) && !(Paralax("left")==0 && Paralax("right")==0)){
-//      MajuKanan(30);
-//      MajuKananDorong();
-//      MajuKiri(30);
-//      MajuKiriDorong();
-//    }
-//  MenujuRoom1();
-//  
-//  Berdiri();
-//
-//  MundurAwal();
-//  while(true){
-//    MundurKiri(50);
-//    MundurKiriDorong();
-//    MundurKanan(50);
-//    MundurKananDorong();
-
-
-//    delay(100000000);
 
 }

@@ -1,7 +1,4 @@
 void RintanganHome() {
-//  compass.init();
-  CompassCalibration(); 
-  compass.read();
-  InitAzimuth();
+//  compass.read();
   AdjustRobotPositionSelatan(); //fungsi yang memposisikan robot keluar home
 }

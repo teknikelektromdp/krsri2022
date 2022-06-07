@@ -27,6 +27,13 @@ double TermalMaxTemp() {
   return termal.getMaxTemp();  
 }
 
+void TermalSetup(){
+  termal.setRefreshRate(RATE_8HZ);
+  termal.setResolution(RES_17bit);
+  termal.setEmissivity(1.0);
+  termal.initialize ();
+}
+
 //void setup(){ 
 //  Serial.begin(115200); //170ms a 19k2, 28ms a 115k2
 //  //Serial.println(F("trying to initialize sensor..."));
