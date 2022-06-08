@@ -24,7 +24,7 @@ void RintanganPuing1(){
       Putar("kiri", 32,50); //berputar sejauh 32 derajat 
       kondisiMaju=0;
       
-    } else if((par_l==0 && par_l>40) && (par_f<=25 && par_f>0)){//robot menemukan simpangan kiri
+    } else if((par_l==0 || par_l>40) && (par_f<=25 && par_f>0)){//robot menemukan simpangan kiri
       dinding2=1;//lanjut ke rintangan berikutnya 
       
     } else if((par_rd>15 && par_rd<=35) && (par_f<=25 && par_f>0)){//robot menemukan simpangan kiri

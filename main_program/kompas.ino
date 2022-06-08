@@ -18,14 +18,14 @@ void CompassCalibration()
 }
 void InitAzimuth()
 {
-  min_range_south = 295;
-  max_range_south = 305;
-  min_range_north = 70;
-  max_range_north = 80;
-  min_range_east = 250;
-  max_range_east = 260;
-  min_range_west = 35;
-  max_range_west = 70;
+  min_range_south = 268;
+  max_range_south = 282;
+  min_range_north = 85;
+  max_range_north = 105;
+  min_range_east = 205;
+  max_range_east = 230 ;
+  min_range_west = 0;
+  max_range_west = 55;
 }
 
 //fungsi untuk memutar robot ke selatan

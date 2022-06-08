@@ -1,8 +1,4 @@
 void RintanganNaikTurun(){
-//  int dinding3;
-
-//  dinding3=0;//flag yang menyimpan keadaan robot menemukan dinding di depan, nilai ini nantinya digunakan untuk keluar dari while
-//  while(dinding3==0){
   BacaSensor();
   LcdDisplay();
 

@@ -3,10 +3,10 @@
 // baris 2 ==> mode, kompas
 void LcdDisplay(){ 
     lcd.setCursor(0,0);
-    lcd.print(par_l); lcd.print(";"); lcd.print(par_ld); lcd.print(";"); lcd.print(par_f); lcd.print(";"); lcd.print(par_rd); lcd.print(";"); lcd.print(par_r); lcd.print(";");
+    lcd.print(par_l); lcd.print(";"); lcd.print(par_ld); lcd.print(";"); lcd.print(par_f); lcd.print(";"); lcd.print(par_rd); lcd.print(";"); lcd.print(par_r); lcd.print(";    ");
 
     lcd.setCursor(0, 1);
-    lcd.print(par_g); lcd.print(";"); lcd.print(par_b); lcd.print(";"); lcd.print(kompasValue); lcd.print(";"); lcd.print(modeGerak); lcd.print(";");
+    lcd.print(par_g); lcd.print(";"); lcd.print(par_b); lcd.print(";"); lcd.print(kompasValue); lcd.print(";"); lcd.print(modeGerak); lcd.print(";    ");
 }
 
 

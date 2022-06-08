@@ -4,7 +4,7 @@
 #include <NewPing.h>
 #include <Servo.h>
 #include <QMC5883LCompass.h>
-#include "MLX90621.h"
+#include <MLX90621.h>
 #include <Pixy2.h>
 #include <Servo.h>
 
@@ -179,9 +179,7 @@ void loop() {
   RintanganPuing1();
 
 
-  /**
-   * Robot melalui rintangan naik-turun
-   */
+  //Robot melalui rintangan naik-turun
   RintanganNaikTurun();
 
   //Setelah selesai dengan rintangan naik-turun
@@ -194,7 +192,7 @@ void loop() {
 
   /**
    * Penyelamatan dan pemadaman
-    */
+   */
       Berdiri();
       int apiAda=0, apiSuhu=45;
       double termalBaca=TermalMaxTemp();
@@ -256,6 +254,8 @@ void loop() {
       }
   
       Padam(300);
+
+    
     lcd.clear();
     lcd.print("Done");
 

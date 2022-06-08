@@ -23,7 +23,7 @@ void RintanganHomeMaju() {
       Putar("kiri", 32, 30); //berputar sejauh 32 derajat 
       kondisiMaju=0;
       
-    } else if((par_l==0 || par_l>40) && (par_f<=25 && par_f>0)){//robot menemukan simpangan kiri
+    } else if((par_l==0 || par_l>40) && (par_f<=20 && par_f>0)){//robot menemukan simpangan kiri
       dinding1=1;//lanjut ke rintangan berikutnya
 
     } else{//robot lurus sehingga meneruskan untuk maju

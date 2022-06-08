@@ -58,7 +58,7 @@ void RintanganMenujuRoom1(){
   BacaSensor();
   LcdDisplay();
   
-  while(!(kompasValue >= min_range_north+30 && kompasValue <= max_range_north+30))
+  while(!((kompasValue >= min_range_north && kompasValue <= max_range_north)))
   {
     modeGerak="ka1";
     LcdDisplay();
