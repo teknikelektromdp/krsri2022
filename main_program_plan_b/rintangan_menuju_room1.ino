@@ -3,11 +3,13 @@ void RintanganMenujuRoom1(){
   
   BacaSensor();
   LcdDisplay();
-  while(!(kompasValue >= min_range_west && kompasValue <= max_range_west))
+
+  
+  while(!(kompasValue >= min_range_west || kompasValue <= max_range_west))
   {
     modeGerak="ki3";
     LcdDisplay();
-    Putar("kiri", 32, 30);
+    Putar("kiri", 32, 35);
     BacaSensor();
 
   }
@@ -24,14 +26,14 @@ void RintanganMenujuRoom1(){
     LcdDisplay();
 
     
-    if((par_ld<=13 && par_ld>0) || (par_l<=10 && par_l>0)){//robot terlalu ke kiri sehingga perlu memutar ke kanan
+    if(kompasValue<min_range_north && kompasValue>min_range_south){//robot terlalu ke kiri sehingga perlu memutar ke kanan
       if (kondisiMaju==1) Berdiri();
       Putar("kanan", 32, 30); 
       modeGerak="r1";
       LcdDisplay();
       kondisiMaju=0;
       
-    } else if((par_rd<=13 && par_rd>0) || (par_r<=10 && par_r>0)){//robot terlalu ke kanan sehingga perlu memutar ke kiri
+    } else if(kompasValue>max_range_north && kompasValue<min_range_north){//robot terlalu ke kanan sehingga perlu memutar ke kiri
       if (kondisiMaju==1) Berdiri();
       modeGerak="r1";
       LcdDisplay();
@@ -40,7 +42,13 @@ void RintanganMenujuRoom1(){
       
     } else if((par_l==0 || par_l>40) && (par_r>=40 || par_r==0) && (par_f>=55 && par_f<=70)){//robot menemukan simpangan kiri
       simpang=1;//lanjut ke rintangan berikutnya
-
+      
+    } else if((par_l==0 || par_l>40) && (par_r>=40 || par_r==0) && (par_f<55)){
+      MundurAwal();
+      for(int i=0; i<=2;i++) Mundur(30);
+      Berdiri();
+      kondisiMaju=0;
+      
     } else{//robot lurus sehingga meneruskan untuk maju
       if (kondisiMaju==0) MajuAwal();
       

@@ -9,26 +9,23 @@ void RintanganHomeMaju() {
     BacaSensor();
     LcdDisplay();
 
-    if((par_ld<=13 && par_ld>0) || (par_l<=10 && par_l>0)){//robot terlalu ke kiri sehingga perlu memutar ke kanan
+    if(kompasValue< min_range_south){//robot terlalu ke kiri sehingga perlu memutar ke kanan
       if (kondisiMaju==1) Berdiri();
       modeGerak = "hm";
       LcdDisplay();
       Putar("kanan", 32, 30);//berputar sejauh 32 derajat 
       kondisiMaju=0;
       
-    } else if((par_rd<=13 && par_rd>0) || (par_r<=10 && par_r>0)){//robot terlalu ke kanan sehingga perlu memutar ke kiri
+    } else if(kompasValue>max_range_south){//robot terlalu ke kanan sehingga perlu memutar ke kiri
       if (kondisiMaju==1) Berdiri();
       modeGerak = "hm";
       LcdDisplay();
       Putar("kiri", 32, 30); //berputar sejauh 32 derajat 
       kondisiMaju=0;
       
-    } else if((par_l==0 || par_l>40) && (par_f<=20 && par_f>0)){//robot menemukan simpangan kiri
+    } else if((par_l ==0 ||par_l>24)&& par_f<=20){//robot menemukan dinding di depan
       dinding1=1;//lanjut ke rintangan berikutnya
 
-    } else if(kompasValue>= min_range_east && kompasValue<= max_range_east){
-      dinding1=1;
-      
     } else{//robot lurus sehingga meneruskan untuk maju
       if (kondisiMaju==0) MajuAwal();
 
@@ -39,7 +36,6 @@ void RintanganHomeMaju() {
       kondisiMaju=1;
     }
   }
-
 
   
   // memutar posisi hingga menghadap puing 1

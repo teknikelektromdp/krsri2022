@@ -51,6 +51,10 @@ void NaikMajuKananDorong() {
 //  ServoMovementTriple("RFM", -5, "RBM", -5, "LFM", -5);
 //  delay(1);
 
+  ServoMovementDouble("RFB", 5, "LFB", 5);
+  ServoMovementDouble("RFM", -5, "LFM", -5);
+  delay(1);
+
   //kedua kaki kanan dan kaki kiri depan mendorong ke depan
   ServoMovementTriple("RFT", BerdiriSudut("RFT", 0), 
                       "RBT", BerdiriSudut("RBT", naikMajuDorong), 
@@ -61,6 +65,9 @@ void NaikMajuKananDorong() {
 //  ServoMovementTriple("RFB", 0, "RBB", 0, "LFB", 0);
 //  ServoMovementTriple("RFM", 0, "RBM", 0, "LFM", 0);
 //  delay(1);
+  ServoMovementDouble("RFB", 0, "LFB", 0);
+  ServoMovementDouble("RFM", 0, "LFM", 0);
+  delay(1);
 }
 
 void NaikMajuKiri() {
@@ -83,6 +90,10 @@ void NaikMajuKiriDorong() {
 //  ServoMovementTriple("LFM", -5, "LBM", -5, "RFM", -5);
 //  delay(1);
 
+  ServoMovementDouble("LFB", 5, "RFB", 5);
+  ServoMovementDouble("LFM", -5, "RFM", -5);
+  delay(1);
+
   //kedua kaki kiri dan kaki kanan depan mendorong ke depan
   ServoMovementTriple("LFT", BerdiriSudut("LFT", 0), 
                       "LBT", BerdiriSudut("LBT", naikMajuDorong), 
@@ -93,4 +104,7 @@ void NaikMajuKiriDorong() {
 //  ServoMovementTriple("LFB", 0, "LBB", 0, "RFB", 0);
 //  ServoMovementTriple("LFM", 0, "LBM", 0, "RFM", 0);
 //  delay(1);
+  ServoMovementDouble("LFB", 0, "RFB", 0);
+  ServoMovementDouble("LFM", 0, "RFM", 0);
+  delay(1);
 }

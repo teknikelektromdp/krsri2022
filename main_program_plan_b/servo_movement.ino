@@ -53,6 +53,46 @@ int BerdiriSudut(String servoNama, int sudut) {
 
 
 /**
+ * posisi berdiri untuk mundur jalan menaik
+ */
+int berdiriLftNaikMundur=0,   berdiriRftNaikMundur=0,
+    berdiriLbtNaikMundur=0,   berdiriRbtNaikMundur=0,
+    berdiriLfmNaikMundur=-28,  berdiriRfmNaikMundur=-28,//10,
+    berdiriLbmNaikMundur=10, berdiriRbmNaikMundur=10,//-28,
+    berdiriLfbNaikMundur=10, berdiriRfbNaikMundur=10,//-10,
+    berdiriLbbNaikMundur=-10,  berdiriRbbNaikMundur=-10;//10;
+
+void BerdiriNaikMundur(){
+  ServoWrite("LFT",BerdiriSudutMundur("LFT", 0));  ServoWrite("RFT",BerdiriSudutMundur("RFT", 0));
+  ServoWrite("LBT",BerdiriSudutMundur("LBT", 0));  ServoWrite("RBT",BerdiriSudutMundur("RBT", 0));
+
+  ServoWrite("LFM",BerdiriSudutMundur("LFM", 0));  ServoWrite("RFM",BerdiriSudutMundur("RFM", 0));
+  ServoWrite("LBM",BerdiriSudutMundur("LBM", 0));  ServoWrite("RBM",BerdiriSudutMundur("RBM", 0));
+
+  ServoWrite("LFB",BerdiriSudutMundur("LFB", 0));  ServoWrite("RFB",BerdiriSudutMundur("RFB", 0));
+  ServoWrite("LBB",BerdiriSudutMundur("LBB", 0));  ServoWrite("RBB",BerdiriSudutMundur("RBB", 0));
+}
+
+int BerdiriSudutMundur(String servoNama, int sudut) {
+  if (servoNama.equals("LFT")) return sudut+berdiriLftNaikMundur;
+  else if (servoNama.equals("LFM")) return sudut+berdiriLfmNaikMundur;
+  else if (servoNama.equals("LFB")) return sudut+berdiriLfbNaikMundur;
+  
+  else if (servoNama.equals("LBT")) return sudut+berdiriLbtNaikMundur;
+  else if (servoNama.equals("LBM")) return sudut+berdiriLbmNaikMundur;
+  else if (servoNama.equals("LBB")) return sudut+berdiriLbbNaikMundur;
+  
+  else if (servoNama.equals("RFT")) return sudut+berdiriRftNaikMundur;
+  else if (servoNama.equals("RFM")) return sudut+berdiriRfmNaikMundur;
+  else if (servoNama.equals("RFB")) return sudut+berdiriRfbNaikMundur;
+  
+  else if (servoNama.equals("RBT")) return sudut+berdiriRbtNaikMundur;
+  else if (servoNama.equals("RBM")) return sudut+berdiriRbmNaikMundur;
+  else if (servoNama.equals("RBB")) return sudut+berdiriRbbNaikMundur;
+}
+
+
+/**
  * Fungsi menggerakkan servo dengan perlahan
  */
 void ServoMovementSingle(String servoNama, int sudutBaru) {

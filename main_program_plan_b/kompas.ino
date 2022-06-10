@@ -20,12 +20,12 @@ void InitAzimuth()
 {
   min_range_south = 268;
   max_range_south = 282;
-  min_range_north = 85;
-  max_range_north = 105;
-  min_range_east = 205;
+  min_range_north = 100;
+  max_range_north = 115;
+  min_range_east = 210;
   max_range_east = 230 ;
-  min_range_west = 0;
-  max_range_west = 55;
+  min_range_west = 350;
+  max_range_west = 25;
 }
 
 //fungsi untuk memutar robot ke selatan
